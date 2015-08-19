@@ -1,0 +1,41 @@
+message:
+    player:
+        online: "\u00A74%s muss online sein!"
+    chunk:
+        bought:
+            success: "\u00A7aJetzt gehoert dir das Grundstueck."
+            broke: "\u00A74Du bist pleite!"
+            failure: "\u00A74Das Grundstueck kannst du nicht kaufen!"
+            forbidden: "\u00A74Hier lohnt sich kein Grundstueck!"
+        sold:
+            success: "\u00A7aDas Grundstueck ist verkauft."
+            full_inventory: "\u00A74Du hast kein Platz mehr in deinem Inventory um ein Grundstueck verkaufen zu koennen!"
+            failure: "\u00A74Du kannst das Grundstueck nicht verkaufen!"
+        forbidden:
+            break: "\u00A74Aua, das tut weh. Lass das!"
+            build: "\u00A74Bau wo anders!"
+            use: "\u00A74Na ob das so gut ist, was du da vor hast!"
+        owner:
+            free: "\u00A76Grundstueck kostet 30 Skelett Koepfe, kaufen mit /kaufen"
+            you: "\u00A7eDu kannst dein Grundstueck verkaufen mit /verkaufen"
+            other: "\u00A7e%s \u00A76ist der Eigentuemer."
+        chest: "\u00A74Finger weg von der Kiste!"
+        helper:
+            add: "\u00A7aBauhelfer \u00A72%s \u00A7aist willig zum Arbeiten."
+            remove: "\u00A7aBauhelfer \u00A72%s \u00A7awurde gekuendigt."
+            list: "\u00A76%d Bauhelfer \u00A7f%s"
+            other: "\u00A72Du kannst \u00A7a%s \u00A72jetzt beim bauen helfen."
+        regenerate:
+            chunk:
+              error: "\u00A74Konnte den Chunk nicht neu generieren!"
+              success: "\u00A7aChunk regeneriert."
+              bought: "\u00A74Dieser Chunk gehoert \u00A7c%s\u00A74!"
+            chunks:
+              error: "\u00A74Fehler beim Regenerieren in Chunk X: %d Z: %d!"
+              success: "\u00A7a%d Chunks regeneriert."
+    door:
+      private: "\u00A74Privater Bereich von \u00A7c%s\u00A74!"
+cachesize:
+    chunklog: 40
+    chunkprotect: 40
+    helper: 40
