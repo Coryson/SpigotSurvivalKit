@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -13,30 +13,36 @@ import java.util.logging.Logger;
 public abstract class Table {
 
     final Connection database;
-    final String table;
-    final Logger logger;
     
-    public Table(Connection database, String table, Logger logger) {
+    final String table;
+    
+    public Table(Connection database, String table) {
         this.database = database;
         this.table = table;
-        this.logger = logger;
     }
     
     public String getTableName() {
         return this.table;
     }
     
-    protected boolean createTable(String sql) {
+    boolean createTable(String sql) {
         
         try {
             Statement stmt = this.database.createStatement();
-            return stmt.executeUpdate(sql) == 0;
+            stmt.executeUpdate(sql);
+
+            return true;
             
         } catch (SQLException e) {
-            this.logger.log(
+
+            Bukkit.getLogger().log(
                 Level.WARNING,
-                "{0}: {1}",
-                new Object[]{e.getClass().getName(), e.getMessage()}
+                "Create Table {0} is failed! {1}: {2}",
+                new Object[]{
+                    this.getTableName(),
+                    e.getClass().getName(),
+                    e.getMessage()
+                }
             );
             return false;
         }

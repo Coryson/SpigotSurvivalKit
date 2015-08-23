@@ -1,6 +1,16 @@
 name: SpigotSurvivalKit
 main: de.schillermann.spigotsurvivalkit.Main
-version: 0.1
+version: 0.2
 commands:
-    menu:
-        description: Spieler Menu oeffnen
+    jail:
+        usage: /<command> <player>
+        description: Locks a a player in Jail
+        permission: spigotsurvivalkit.imprison
+    plot:
+        usage: /<command> <release>
+        description: Gives a Plot free
+        permission: spigotsurvivalkit.plot
+    bank:
+        usage: /<command> <Spieler> [Diamanten]
+        description: Displays the Player Balance or transfers money
+        permission: spigotsurvivalkit.bank

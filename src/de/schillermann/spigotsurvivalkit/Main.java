@@ -1,13 +1,25 @@
 package de.schillermann.spigotsurvivalkit;
 
-import de.schillermann.spigotsurvivalkit.cache.ChunkProtectCache;
-import de.schillermann.spigotsurvivalkit.cache.HelperCache;
-import de.schillermann.spigotsurvivalkit.databases.tables.ChunkProtectTable;
-import de.schillermann.spigotsurvivalkit.listeners.MenuListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.logging.Level;
+import de.schillermann.spigotsurvivalkit.services.PlotProvider;
+import de.schillermann.spigotsurvivalkit.cache.*;
+import de.schillermann.spigotsurvivalkit.commands.BankCommand;
+import de.schillermann.spigotsurvivalkit.commands.BankCommandMessage;
+import de.schillermann.spigotsurvivalkit.commands.PlotCommand;
+import de.schillermann.spigotsurvivalkit.commands.PlotCommandMessage;
+import de.schillermann.spigotsurvivalkit.listeners.*;
+import de.schillermann.spigotsurvivalkit.menu.*;
+import de.schillermann.spigotsurvivalkit.commands.PrisonCommand;
+import de.schillermann.spigotsurvivalkit.databases.DatabaseProvider;
+import de.schillermann.spigotsurvivalkit.menu.PlayerMenuListener;
+import de.schillermann.spigotsurvivalkit.menu.PlayerMenu;
+import de.schillermann.spigotsurvivalkit.listeners.PlotMessage;
+import de.schillermann.spigotsurvivalkit.services.BankProvider;
+import de.schillermann.spigotsurvivalkit.services.Stats;
+import de.schillermann.spigotsurvivalkit.services.StatsConfig;
+import de.schillermann.spigotsurvivalkit.utils.ChunkRegeneration;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,10 +30,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 final public class Main extends JavaPlugin {
 
-    Connection database = null;
-    HelperCache cacheHelper;
-    ChunkProtectCache cacheChunkProtect;
-    ChunkProtectTable tableChunkProtect;
+    private DatabaseProvider database;
+    
+    private HelperCache cacheHelper;
+    private PlotCache cachePlot;
+    private ChunkLogCache cacheChunkLog;
+    private BankProvider providerBank;
+    private PlotProvider providerPlot;
     
     @Override
     public void onEnable(){
@@ -29,128 +44,148 @@ final public class Main extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         saveConfig();
         
-        if(!this.onDatabase()) {
+        this.database = new DatabaseProvider();
+        
+        if(!this.database.isInitialize()) {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
+                
         this.onCache(this.getConfig());
+        
+        this.providerBank = new BankProvider(this.database.getTableBank());
+        
+        this.providerPlot = new PlotProvider(
+            this.database.getTablePlot(),
+            this.cachePlot,
+            this.database.getTableChunkLog(),
+            providerBank,
+            Material.getMaterial(this.getConfig().getString("currency"))
+        );
+        
         this.onCommand(this.getConfig());
-        this.onListener(this.getServer().getPluginManager(), this.getConfig());
+        
+        this.onListener(
+            this.getServer().getPluginManager(),
+            this.getConfig()
+        );
+        
+        Bukkit.getScheduler().runTask(
+            this,
+            new ChunkRegeneration(
+                this.database.getTableChunkLog(),
+                this.getConfig().getString("chunks.regenerate.success"),
+                this.getConfig().getString("chunks.regenerate.error")
+            )
+        );
     }
     
     @Override
     public void onDisable() {
         
-        if(database != null) {
-            
-            try {
-                database.close();
-            } catch (SQLException e) {
-                this.getLogger().log(
-                    Level.WARNING,
-                    "{0}: {1}",
-                    new Object[]{e.getClass().getName(), e.getMessage()}
-                );
-            }
-        }
+        this.database.close();
     }
     
-    boolean onDatabase() {
-        try {
-          Class.forName("org.sqlite.JDBC");
-          this.database = DriverManager.getConnection("jdbc:sqlite:knuddelcraft.db");
-          
-        } catch ( ClassNotFoundException | SQLException e ) {
-          
-            this.getLogger().log(
-                Level.WARNING,
-                "{0}: {1}",
-                new Object[]{e.getClass().getName(), e.getMessage()}
-            );
-            return false;
-        }
-        
-        this.tableChunkProtect = new ChunkProtectTable(
-            this.database, this.getLogger()
-        );
-        
-        if(this.tableChunkProtect.createTable())
-            this.getLogger().log(
-                Level.INFO,
-                "Table {0} was created.",
-                this.tableChunkProtect.getTableName()
-            );
-        
-        return true;
-    }
+    private void onCache(FileConfiguration config) {
 
-    void onCache(FileConfiguration config) {
-        /*
+        this.cacheChunkLog = new ChunkLogCache(
+            this.database.getTableChunkLog(),
+            config.getInt("cachesize.chunklog")
+        );
+        
         this.cacheHelper = new HelperCache(
-            this.helperTable,
+            this.database.getTableHelper(),
             config.getInt("cachesize.helper")
-        );*/
+        );
         
-        this.cacheChunkProtect = new ChunkProtectCache(
-            this.tableChunkProtect,
-            config.getInt("cachesize.chunkprotect")
+        this.cachePlot = new PlotCache(
+            this.database.getTablePlot(),
+            config.getInt("cachesize.plotprotect")
         );
     }
     
-    void onCommand(FileConfiguration config) {
+    private void onCommand(FileConfiguration config) {
         
-        /*
-        BuyCommand buyCommand = new BuyCommand(
-            this.tableChunkProtect,
-            this.cacheChunkProtect,
-            Material.DIAMOND,
-            config.getInt("chunk.price"),
-            config.getString("message.chunk.bought.success"),
-            config.getString("message.chunk.bought.broke"),
-            config.getString("message.chunk.bought.failure"),
-            config.getString("message.chunk.bought.forbidden")
-        );
-	this.getCommand("kaufen").setExecutor(buyCommand);
-        
-        SellCommand sellCommand = new SellCommand(
-            this.chunkProtectTable,
-            this.chunkProtectCache,
-            this.shopApi,
-            config.getString("message.chunk.sold.success"),
-            config.getString("message.chunk.sold.failure"),
-            config.getString("message.chunk.sold.full_inventory"),
-            config.getInt("chunk.price")
-        );
-	this.getCommand("verkaufen").setExecutor(sellCommand);
-        
-        HelperCommand helperCommand = new HelperCommand(
-            this.helperTable,
-            this.helperCache,
-            config.getString("message.chunk.helper.add"),
-            config.getString("message.chunk.helper.remove"),
-            config.getString("message.chunk.helper.list"),
-            config.getString("message.chunk.helper.other"),
-            config.getString("message.player.online")
+        Location prisonLocation = new Location(
+            Bukkit.getWorld(config.getString("prisonspawn.world")),
+            config.getInt("prisonspawn.x"),
+            config.getInt("prisonspawn.y"),
+            config.getInt("prisonspawn.z")
         );
         
-	this.getCommand("bauhelfer").setExecutor(helperCommand);
-        
-        ChunkCommand chunkCommand = new ChunkCommand(
-            this.chunkTable,
-            this.chunkProtectTable,
-            config.getString("message.chunk.regenerate.chunk.error"),
-            config.getString("message.chunk.regenerate.chunk.success"),
-            config.getString("message.chunk.regenerate.chunk.bought"),    
-            config.getString("message.chunk.regenerate.chunks.success"),
-            config.getString("message.chunk.regenerate.chunks.error")
+        PrisonCommand prisonCommand = new PrisonCommand(
+            prisonLocation,
+            config.getString("prisonspawn.broadcast"),
+            config.getString("player_not_found")
         );
-        this.getCommand("chunk").setExecutor(chunkCommand);*/
+        
+        this.getCommand("jail").setExecutor(prisonCommand);
+        
+        BankCommand bankCommand = new BankCommand(
+            this.providerBank,
+            new BankCommandMessage(config)
+        );
+        this.getCommand("bank").setExecutor(bankCommand);
+        
+        PlotCommand plotCommand = new PlotCommand(
+            this.providerPlot,
+            new PlotCommandMessage(config)
+        );
+        this.getCommand("plot").setExecutor(plotCommand);
     }
     
-    void onListener(PluginManager pm, FileConfiguration config) {
+    private void onListener(
+        PluginManager pm,
+        FileConfiguration config
+    ) {
         
-        MenuListener menu = new MenuListener();
+        ChunkListener chunk = new ChunkListener(
+            this.cachePlot,
+            this.cacheChunkLog,
+            this.cacheHelper,
+            new PlotMessage(config)
+        );
+        pm.registerEvents(chunk, this);
+        
+        Location deathLocation = new Location(
+            Bukkit.getWorld(config.getString("hospital.world")),
+            config.getInt("hospital.x"),
+            config.getInt("hospital.y"),
+            config.getInt("hospital.z")
+        );
+        
+        Hospital hospital = new Hospital(
+            deathLocation,
+            config.getString("hospital.info")
+        );
+        
+        PlayerListener player = new PlayerListener(
+            this.providerBank,
+            new Stats(this.database.getTableStats(), new StatsConfig(config)),
+            hospital,
+            new JoinMessage(config)
+        );
+        pm.registerEvents(player, this);
+        
+        LockListener lock = new LockListener(
+            this.database.getTableLock(),
+            new LockMessage(config)
+        );
+        pm.registerEvents(lock, this);
+        
+        PlayerMenu playerMenu = new PlayerMenu(
+            this,
+            new PlayerMenuItemPalette(config),
+            new PlayerMenuMessage(config),
+            this.providerPlot,
+            this.cacheHelper
+        );
+        
+        PlayerMenuListener menu = new PlayerMenuListener(
+            Material.getMaterial(config.getString("playermenu.open_with_item")),
+            playerMenu
+        );
+        
         pm.registerEvents(menu, this);
     }
 }

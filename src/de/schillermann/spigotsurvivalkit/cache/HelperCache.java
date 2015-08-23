@@ -1,8 +1,12 @@
 package de.schillermann.spigotsurvivalkit.cache;
 
+import com.google.common.primitives.Ints;
 import de.schillermann.spigotsurvivalkit.databases.tables.HelperTable;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -10,10 +14,11 @@ import java.util.UUID;
  */
 final public class HelperCache {
     
-    final HelperTable helper;
-    final int cacheSize;
-    Integer[] playerhelperHashList;
-    int index;
+    final private HelperTable helper;
+    final private int cacheSize;
+    private int[] playerHelperHashList;
+    private HashMap<Integer, List<String>> helperList;
+    private int index;
     
     public HelperCache(HelperTable helper, int cacheSize) {
         
@@ -23,33 +28,63 @@ final public class HelperCache {
     }
     
     public void clear() {
-        this.playerhelperHashList = new Integer[this.cacheSize];
+        this.playerHelperHashList = new int[this.cacheSize];
+        this.helperList = new HashMap<>();
         this.index = 0;
+    }
+    
+    public int editHelperFromPlayer(UUID player, UUID helper) {
+        
+        int result = -1;
+        
+        if(this.helper.deleteHelper(player, helper))
+            result = 1;   
+        else if(this.helper.insertHelper(player, helper))
+            result = 2;
+        
+        this.clear();
+        return result;
+    }
+    
+    public List<String> getHelperListFromPlayer(UUID player) {
+        
+        int playerHash = player.hashCode();
+        
+        if(this.helperList.size() > this.cacheSize)
+            this.helperList.clear();
+        
+        if(this.helperList.containsKey(playerHash))
+            return this.helperList.get(playerHash);
+
+        
+        List<UUID> helperUuidList = this.helper.selectHelperListFromPlayer(player);
+        List<String> helperNameList = new ArrayList<>();
+        
+        for (UUID uuid : helperUuidList)
+            helperNameList.add(Bukkit.getOfflinePlayer(uuid).getName());
+        
+        this.helperList.put(playerHash, helperNameList);
+        
+        return helperNameList;
     }
     
     public boolean hasPlayerThisHelper(UUID player, UUID helper) {
         
-        int isExists = player.hashCode() - helper.hashCode();
-        int notExists = helper.hashCode() - player.hashCode();
+        int isHelper = player.hashCode() - helper.hashCode();
+        int noHelper = helper.hashCode() - player.hashCode();
 
-        Boolean helperExists =
-            Arrays.asList(this.playerhelperHashList).contains(isExists);
+        if(Ints.contains(this.playerHelperHashList, isHelper)) return true;
 
-        if(helperExists) return true;
-
-        Boolean helperNotExists =
-            Arrays.asList(this.playerhelperHashList).contains(notExists);
-
-        if(helperNotExists) return false;
+        if(Ints.contains(this.playerHelperHashList, noHelper)) return false;
 
         if(this.index == this.cacheSize) this.index++;
 
         if(this.helper.hasPlayerThisHelper(player, helper)) {
-            this.playerhelperHashList[this.index++] = isExists;
+            this.playerHelperHashList[this.index++] = isHelper;
             return true;
         }
         
-        this.playerhelperHashList[this.index++] = notExists;
+        this.playerHelperHashList[this.index++] = noHelper;
         return false;
     }
 }

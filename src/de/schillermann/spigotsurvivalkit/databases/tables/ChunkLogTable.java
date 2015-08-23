@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.databases.tables;
 
-import de.schillermann.spigotsurvivalkit.entities.ChunkLocation;
+import de.schillermann.spigotsurvivalkit.databases.tables.entities.ChunkLocation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
 /**
@@ -17,8 +17,8 @@ import org.bukkit.Chunk;
  */
 final public class ChunkLogTable extends Table {
     
-    public ChunkLogTable(Connection database, Logger logger) {
-        super(database, "chunk_log", logger);
+    public ChunkLogTable(Connection database) {
+        super(database, "chunk_log");
     }
     
     public boolean insertChunk(int x, int z) {
@@ -32,11 +32,13 @@ final public class ChunkLogTable extends Table {
             
             stmt.setInt(1, x);
             stmt.setInt(2, z);
-            return stmt.executeUpdate() == 1;
+            stmt.executeUpdate();
+            
+            return true;
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}
@@ -56,11 +58,12 @@ final public class ChunkLogTable extends Table {
             
             stmt.setInt(1, chunk.getX());
             stmt.setInt(2, chunk.getZ());
+            
             return stmt.executeUpdate() == 1;
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}
@@ -89,7 +92,7 @@ final public class ChunkLogTable extends Table {
         }
         catch (SQLException e) {
             
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}

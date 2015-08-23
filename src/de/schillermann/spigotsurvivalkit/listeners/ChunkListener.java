@@ -1,141 +1,170 @@
 package de.schillermann.spigotsurvivalkit.listeners;
 
+import de.schillermann.spigotsurvivalkit.cache.ChunkLogCache;
+import de.schillermann.spigotsurvivalkit.cache.PlotCache;
+import de.schillermann.spigotsurvivalkit.cache.HelperCache;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
  * @author Mario Schillermann
  */
 final public class ChunkListener implements Listener {
-/*
-    final ChunkLogTable chunkTable;
-    final ChunkProtectTable chunkProtectTable;
-    final ChunkLogCache chunkLogCache;
-    final ChunkProtectCache chunkProtectCache;
-    final HelperCache helperCache;
-    final HelperTable helperTable;
-    final String forbiddenBreak;
-    final String forbiddenBuild;
+    
+    final private PlotCache cachePlot;
+    
+    final private ChunkLogCache cacheChunkLog;
+    
+    final private HelperCache cacheHelper;
+    
+    final private PlotMessage message;
+    
+    final private List<Integer> playerInWildernessList;
     
     public ChunkListener(
-        ChunkLogTable chunkTable,
-        ChunkProtectTable chunkProtectTable,
-        ChunkLogCache chunkLogCache,
-        ChunkProtectCache chunkProtectCache,
-        HelperCache helperCache,
-        HelperTable helperTable,
-        String forbiddenBreak,
-        String forbiddenBuild
+        PlotCache cachePlot,
+        ChunkLogCache cacheChunkLog,
+        HelperCache cacheHelper,
+        PlotMessage message
     ) {
-        this.chunkTable = chunkTable;
-        this.chunkProtectTable = chunkProtectTable;
-        this.chunkLogCache = chunkLogCache;
-        this.chunkProtectCache = chunkProtectCache;
-        this.helperCache = helperCache;
-        this.helperTable = helperTable;
-        this.forbiddenBreak = forbiddenBreak;
-        this.forbiddenBuild = forbiddenBuild;
+        this.cachePlot = cachePlot;
+        this.cacheChunkLog = cacheChunkLog;
+        this.cacheHelper = cacheHelper;
+        this.message = message;
+        this.playerInWildernessList = new ArrayList<>();
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        
+        Integer hash = event.getPlayer().hashCode();
+        
+        if(this.playerInWildernessList.contains(hash)) 
+            this.playerInWildernessList.remove(hash);
+    }
+    
+    @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
 
-        if(event.isCancelled()) return;
         Player player = event.getPlayer();
+        Chunk chunk = event.getBlock().getChunk();
         
-        if(
-            player == null ||
-            player.getWorld().getEnvironment() != World.Environment.NORMAL ||
-            player.hasPermission("bukkitchunkrestoreprotect.free")
-        ) return;
-        
-        UUID playerUuid = player.getUniqueId();
-        
-        UUID playerUuidFromChunk =
-            this.chunkProtectCache.getPlayerUuid(event.getBlock().getChunk());
-        
-        if(
-            playerUuidFromChunk == null ||
-            playerUuidFromChunk.equals(playerUuid) ||
-            this.helperCache.hasPlayerThisHelper(playerUuidFromChunk, playerUuid)
-        ) {
-            return;
-        }
-        
-        event.setCancelled(true);
-        player.sendMessage(this.forbiddenBuild);
+        event.setCancelled(this.isBuildNotAllow(player, chunk));
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
 
-        if(event.isCancelled()) return;
         Player player = event.getPlayer();
+        Chunk chunk = event.getBlock().getChunk();
         
-        if(
-            player == null ||
-            player.getWorld().getEnvironment() != World.Environment.NORMAL
-        ) return;
-        
-        Block block = event.getBlock();
-        if(block == null) return;
-        
-        Chunk chunk = block.getChunk();
-        UUID playerUuid = player.getUniqueId();
-        UUID playerUuidFromChunk =
-            this.chunkProtectCache.getPlayerUuid(chunk);
-
-        // Spieler darf abbauen wenn
-        if(
-            playerUuidFromChunk == null ||
-            playerUuidFromChunk.equals(playerUuid) ||
-            player.hasPermission("bukkitchunkrestoreprotect.free") ||
-            this.helperCache.hasPlayerThisHelper(playerUuidFromChunk, playerUuid)
-        ) {
-            this.chunkLogCache.addChunk(chunk);
-            return;
-        }
-        
-        event.setCancelled(true);
-        player.sendMessage(this.forbiddenBreak);
+        event.setCancelled(this.isBuildNotAllow(player, chunk));
     }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onEntityExplode(EntityExplodeEvent event){
+    
+    
+    @EventHandler
+    public void onPvP(EntityDamageByEntityEvent event) {
+        
+        Entity attacker = event.getDamager();
         
         if(
-            event.isCancelled() ||
-            event.getLocation().getWorld().getEnvironment() != World.Environment.NORMAL
+            attacker == null ||
+            attacker.getWorld().getEnvironment() != World.Environment.NORMAL ||
+            event.getEntityType() != EntityType.PLAYER
         ) return;
+        
+        boolean isAttackerPlayer = attacker.getType() == EntityType.PLAYER;
+        // PvP off
+        if(
+            isAttackerPlayer ||
+            event.getCause() == DamageCause.PROJECTILE ||
+            attacker.getType() == EntityType.SPLASH_POTION
+        ) {
+            Player affected = (Player)event.getEntity();
+            
+            Chunk chunkFromAffected = affected.getLocation().getChunk();
+            if(this.cachePlot.getOwnerUuidFromPlot(chunkFromAffected) == null) return;
+            
+            if(isAttackerPlayer)
+                attacker.sendMessage(this.message.getForbiddenPvpAttacker());
+            
+            affected.sendMessage(this.message.getForbiddenPvpAffected());
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onCreeperExplode(EntityExplodeEvent event){
+        
+        if(event.getLocation().getWorld().getEnvironment() != World.Environment.NORMAL) return;
         
         Chunk chunk = event.getLocation().getChunk();
-
-        if(this.chunkProtectTable.isAdjacentChunkProtect(chunk)) {
-            event.setCancelled(true);
-            return;
-        }
+        boolean isWilderness =
+            this.cachePlot.getOwnerUuidFromPlot(chunk) == null;
         
-        int chunkX = chunk.getX();
-        int chunkZ = chunk.getZ();
-	int endX = chunkX + 1;
-	int endZ = chunkZ + 1;
-	int counterZ;
+        if(isWilderness)
+            this.cacheChunkLog.addChunk(chunk);
+        else
+            event.setCancelled(true);
+    }
+    
+    private boolean isBuildNotAllow(Player player, Chunk chunk) {
+        
+        if(player.getWorld().getEnvironment() == World.Environment.NORMAL)
+            return true;
+        
+        UUID playerUuid = player.getUniqueId();
+        int playerUuidHash = playerUuid.hashCode();
+        
+        UUID ownerUuidFromPlot = this.cachePlot.getOwnerUuidFromPlot(chunk);
 
-	// Speichert umliegende Chunks mit
-	for(int counterX = chunkX - 1; counterX <= endX; counterX++) {
-            for(counterZ = chunkZ - 1; counterZ <= endZ; counterZ++) {
-                this.chunkTable.insertChunk(counterX, counterZ);
+        // Spieler darf abbauen wenn
+        if(ownerUuidFromPlot == null) { // Plot gehört keinem
+
+            this.cacheChunkLog.addChunk(chunk);
+            
+            if(!this.playerInWildernessList.contains(playerUuidHash)) {
+                player.sendMessage(this.message.getRegionWilderness());
+                this.playerInWildernessList.add(playerUuidHash);
             }
+            return false;
         }
-    }*/
+        else {
+            if(this.playerInWildernessList.contains(playerUuidHash)) {
+                player.sendMessage(this.message.getRegionPlot());
+                this.playerInWildernessList.remove(playerUuidHash);
+            }
+            
+            boolean isHelper =
+                this.cacheHelper.hasPlayerThisHelper(
+                    ownerUuidFromPlot,
+                    playerUuid
+                );
+            
+            boolean isBuildAllow =
+                ownerUuidFromPlot.equals(playerUuid) ||
+                isHelper ||
+                player.isOp();
+            
+            if(!isBuildAllow)
+                player.sendMessage(this.message.getForbiddenBreak());
+            
+            return !isBuildAllow;
+        }
+    }
 }

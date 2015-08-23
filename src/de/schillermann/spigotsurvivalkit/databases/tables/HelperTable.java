@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 
 /**
  *
@@ -16,29 +16,29 @@ import java.util.logging.Logger;
  */
 final public class HelperTable extends Table {
     
-    public HelperTable(Connection database, Logger logger) {
-        super(database, "helper", logger);
+    public HelperTable(Connection database) {
+        super(database, "helper");
     }
     
     public boolean insertHelper(UUID player, UUID helper) {
         
         String sql =
             "INSERT OR IGNORE INTO " + this.table +
-            " (player_uuid, helper_uuid) " +
-            "VALUES (?, ?)";
+            " (player_uuid, helper_uuid, created) " +
+            "VALUES (?, ?, strftime('%s','now'))";
   
         try {    
             PreparedStatement stmt = this.database.prepareStatement(sql);
             
             stmt.setString(1, player.toString());
             stmt.setString(2, helper.toString());
-            stmt.execute();
+            stmt.executeUpdate();
             
-            return stmt.executeUpdate() == 1;
+            return true;
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}
@@ -70,7 +70,7 @@ final public class HelperTable extends Table {
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}
@@ -89,12 +89,13 @@ final public class HelperTable extends Table {
             PreparedStatement stmt = this.database.prepareStatement(sql);
             stmt.setString(1, player.toString());
             stmt.setString(2, helper.toString());
+            ResultSet rs = stmt.executeQuery();
             
-            return stmt.getMaxRows() > 0;
+            return rs.next();
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}
@@ -119,7 +120,7 @@ final public class HelperTable extends Table {
         }
         catch (SQLException e)
         {
-            this.logger.log(
+            Bukkit.getLogger().log(
                 Level.WARNING,
                 "{0}: {1}",
                 new Object[]{e.getClass().getName(), e.getMessage()}

@@ -1,41 +1,131 @@
-message:
-    player:
-        online: "\u00A74%s muss online sein!"
-    chunk:
-        bought:
-            success: "\u00A7aJetzt gehoert dir das Grundstueck."
-            broke: "\u00A74Du bist pleite!"
-            failure: "\u00A74Das Grundstueck kannst du nicht kaufen!"
-            forbidden: "\u00A74Hier lohnt sich kein Grundstueck!"
-        sold:
-            success: "\u00A7aDas Grundstueck ist verkauft."
-            full_inventory: "\u00A74Du hast kein Platz mehr in deinem Inventory um ein Grundstueck verkaufen zu koennen!"
-            failure: "\u00A74Du kannst das Grundstueck nicht verkaufen!"
-        forbidden:
-            break: "\u00A74Aua, das tut weh. Lass das!"
-            build: "\u00A74Bau wo anders!"
-            use: "\u00A74Na ob das so gut ist, was du da vor hast!"
-        owner:
-            free: "\u00A76Grundstueck kostet 30 Skelett Koepfe, kaufen mit /kaufen"
-            you: "\u00A7eDu kannst dein Grundstueck verkaufen mit /verkaufen"
-            other: "\u00A7e%s \u00A76ist der Eigentuemer."
-        chest: "\u00A74Finger weg von der Kiste!"
-        helper:
-            add: "\u00A7aBauhelfer \u00A72%s \u00A7aist willig zum Arbeiten."
-            remove: "\u00A7aBauhelfer \u00A72%s \u00A7awurde gekuendigt."
-            list: "\u00A76%d Bauhelfer \u00A7f%s"
-            other: "\u00A72Du kannst \u00A7a%s \u00A72jetzt beim bauen helfen."
-        regenerate:
-            chunk:
-              error: "\u00A74Konnte den Chunk nicht neu generieren!"
-              success: "\u00A7aChunk regeneriert."
-              bought: "\u00A74Dieser Chunk gehoert \u00A7c%s\u00A74!"
-            chunks:
-              error: "\u00A74Fehler beim Regenerieren in Chunk X: %d Z: %d!"
-              success: "\u00A7a%d Chunks regeneriert."
+player_not_found: "\u00A74Spieler %s nicht gefunden!"
+chunks:
+    regenerate:
+        error: "Regeneration fehlgeschlagen in Chunk X: %d Z: %d!"
+        success: "%d Chunks regeneriert."
+plot:
+    forbidden:
+        break: "\u00A74Aua, das tut weh. Lass das!"
+        build: "\u00A74Bau wo anders!"
+        pvp:
+            attacker: "\u00A74Schützt den König!"
+            affected: "\u00A7eKein PvP auf Grundstücken."
+    region:
+        wilderness: "\u00A74Du bist in der Wildnis. \u00A7cDiese wird regelmässig gelöscht!"
+        plot: "\u00A7eDu bist auf deinem Grundstück. \u00A76Dein Bauwerk ist gesichert."
+lock:
+    chest:
+        owner: "\u00A74Private Kiste von \u00A7c%s\u00A74!"
+        locked: "\u00A7aDie Kiste ist gesichert."
+        unlocked: "\u00A7aDie Kiste wurde entsichert."
     door:
-      private: "\u00A74Privater Bereich von \u00A7c%s\u00A74!"
+        owner: "\u00A74Privater Bereich von \u00A7c%s\u00A74!"
+        locked: "\u00A7aDie Tür ist gesichert."
+        unlocked: "\u00A7aDie Tür wurde entsichert."
+command:
+    plot:
+        release:
+            success: "\u00A7aGrundstück ist freigegeben."
+            error: "\u00A74Grundstück konnte nicht freigegeben werden!"
+    bank:
+        transfer: "\u00A72%d Diamant \u00A7awurden an den Spieler \u00A72%s \u00A7aüberwiesen."
+        balance: "\u00A7aKontostand: \u00A72%d Diamant"
+stats:
+    number: 3
+    headline: "\u00A76*** Die reichsten Spieler ***"
+    row: "\u00A7e%s %d Diamanten"
+join:
+    first: "\u00A76***************************************************\n* \u00A7eBau dir ein Stock, um damit dein Menü zu öffnen.\n\u00A76***************************************************"
+    normally: "\u00A7e %s is in the House!"
+    inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Diamanten!"
+    money: "\u00A76Du hast \u00A7e%d Diamant \u00A76von der Bank bekommen."
+playermenu:
+    open_with_item: STICK
+    menu_title: Spieler Menü
+    items:
+        plot_buy:
+            material: GRASS
+            title: Grundstück kaufen
+            owner: "Besitzer: %s"
+            price: "Preis: %d Diamant"
+        plot_sell:
+            material: DIAMOND
+            title: Grundstück verkaufen
+            description:
+            - Sobald ein Spieler dein
+            - Grundstück gekauft hat,
+            - bekommst du die Diamanten.
+        plot_sell_cancel:
+            material: BARRIER
+            title: Verkauf abbrechen
+            description: "Verkaufspreis: %d Diamant"
+        plot_owner:
+            material: STONE_SLAB2
+            title: "Besitzer: %s"
+            description:
+            - Lass dich als
+            - Bauhelfer eintragen.
+            is_helper:
+            - Du bist Bauhelfer
+            - und darfst hier
+            - mitbauen.
+        helper:
+            material: SKULL_ITEM
+            title: Bauhelfer
+            description:
+            - Keine Bauhelfer
+            - eingetragen.
+            - Klick hier um
+            - Bauhelfer ein-
+            - oder auszutragen.
+        teleport_to_spawn:
+            material: BEACON
+            title: Spawn Teleport
+            description:
+            - Teleportiert dich
+            - zum Spawn.
+        teleport_to_bed:
+            material: BED
+            title: Bett Teleport
+            description:
+            - Teleportiert dich zu
+            - deinem Bett, in dem du
+            - zuletzt geschlafen hast.
+    action:
+        no_bed_spawn: "\u00A74Du hast dich noch in keinem Bed schlafen gelegt!"
+        plot:
+            sell:
+                release: "\u00A7aDas Grundstück ist für \u00A72%d Diamanten \u00A7azum Verkauft freigegeben."
+                price:
+                    input: "\u00A7eWieviel Diamanten möchtest du für dein Grundstück haben:"
+                    error: "\u00A74Mindestens 1 Diamant musst du eintragen!"
+            sell_cancel:
+                success: "\u00A7aGrundstück Verkauft ist zurückgenommen."
+                error: "\u00A74Grundstück Verkauft konnte nicht zurück genommen werden!"
+            buy:
+                success: "\u00A7aJetzt gehört dir das Grundstück. \u00A7fPvP ist hier ausgeschaltet."
+                broke: "\u00A74Du hast kein Diamant um das Grundstück bezahlen zu können!"
+        helper:
+            name: "\u00A7eWie heisst der Bauhelfer den du ein oder austragen möchtest:"
+            add: "\u00A7aBauhelfer \u00A72%s \u00A7aist willig zum Arbeiten."
+            remove: "\u00A7aBauhelfer \u00A72%s \u00A7awurde gekündigt."
+            inform_helper: "\u00A7eDu kannst \u00A76%s \u00A7ejetzt beim bauen helfen."
+            player_no_exists: "\u00A74Der Spieler \u00A7c%s \u00A74existiert nicht!"
+hospital:
+    info: "\u00A7eDer Arzt hat dich, zum Glück, wieder zusammen flicken können."
+    world: world
+    x: 10
+    y: 10
+    z: 10
+prisonspawn:
+    broadcast: "\u00A7eDer Betrüger \u00A76%s \u00A7ewurde erwischt! \u00A76Ihr könnt ihn im Gefängnis besuchen."
+    world: world
+    x: 10
+    y: 10
+    z: 10
+plotprice: 1
+currency: DIAMOND
 cachesize:
-    chunklog: 40
-    chunkprotect: 40
-    helper: 40
+    chunklog: 10
+    plotprotect: 10
+    helper: 10
