@@ -19,7 +19,7 @@ final public class HelperCache {
     private int[] playerHelperHashList;
     private HashMap<Integer, List<String>> helperList;
     private int index;
-    
+
     public HelperCache(HelperTable helper, int cacheSize) {
         
         this.helper = helper;
@@ -48,7 +48,7 @@ final public class HelperCache {
     
     public List<String> getHelperListFromPlayer(UUID player) {
         
-        int playerHash = player.hashCode();
+        Integer playerHash = player.hashCode();
         
         if(this.helperList.size() > this.cacheSize)
             this.helperList.clear();
@@ -73,18 +73,23 @@ final public class HelperCache {
         int isHelper = player.hashCode() - helper.hashCode();
         int noHelper = helper.hashCode() - player.hashCode();
 
-        if(Ints.contains(this.playerHelperHashList, isHelper)) return true;
+        if(isHelper == 0 || Ints.contains(this.playerHelperHashList, noHelper))
+            return false;
+        
+        if(Ints.contains(this.playerHelperHashList, isHelper))
+            return true;
 
-        if(Ints.contains(this.playerHelperHashList, noHelper)) return false;
-
-        if(this.index == this.cacheSize) this.index++;
+        if(this.index == this.cacheSize)
+            this.index = 0;
+        else
+            this.index++;
 
         if(this.helper.hasPlayerThisHelper(player, helper)) {
-            this.playerHelperHashList[this.index++] = isHelper;
+            this.playerHelperHashList[this.index] = isHelper;
             return true;
         }
-        
-        this.playerHelperHashList[this.index++] = noHelper;
+
+        this.playerHelperHashList[this.index] = noHelper;
         return false;
     }
 }

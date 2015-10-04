@@ -34,7 +34,7 @@ final public class PlotCache {
     public UUID getOwnerUuidFromPlot(Chunk chunk) {
         
         int foundIndex = Arrays.asList(this.chunkList).indexOf(chunk);
-
+        
         if(foundIndex == -1) {
      
             if(this.index == this.cacheSize) this.index = 0;
@@ -43,10 +43,13 @@ final public class PlotCache {
             this.index++;
             this.chunkList[foundIndex] = chunk;
             
+            UUID plotOwnerUuid = null;
             PlotMetadata metadata = this.plot.selectMetadata(chunk);
             
             if(metadata != null)
-                this.ownerUuidFromPlotList[foundIndex] = metadata.getOwner();
+                plotOwnerUuid = metadata.getOwner();
+            
+            this.ownerUuidFromPlotList[foundIndex] = plotOwnerUuid;
         }
 
         return this.ownerUuidFromPlotList[foundIndex];

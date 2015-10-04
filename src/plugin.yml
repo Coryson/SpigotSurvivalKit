@@ -1,6 +1,6 @@
 name: SpigotSurvivalKit
 main: de.schillermann.spigotsurvivalkit.Main
-version: 0.2
+version: 0.3
 commands:
     jail:
         usage: /<command> <player>

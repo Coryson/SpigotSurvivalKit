@@ -72,11 +72,11 @@ final public class PlayerMenu {
     public void selectMenuItem(Player player, Material select) {
         
         final UUID playerUuid = player.getUniqueId();
-        final int playerUuidHash = playerUuid.hashCode();
+        final Integer playerUuidHash = playerUuid.hashCode();
         final Chunk chunk = player.getLocation().getChunk();
         final PlotMetadata metadata = this.plot.getPlotMetadata(chunk);
         boolean isPlayerOwner = false;
-        int plotPrice = 1;
+        int plotPrice = this.plot.getPlotPriceDefault();
         
         if(metadata != null) {
             isPlayerOwner = metadata.getOwner() == playerUuid;
@@ -107,7 +107,7 @@ final public class PlayerMenu {
             player.sendMessage(this.message.getPlotSellPriceInput());
             
             this.needMetadata.remove(playerUuidHash);
-            this.needMetadata.put(playerUuid.hashCode(), select);
+            this.needMetadata.put(playerUuidHash, select);
         }
         else if(this.itemPalette.isTeleportToBed(select)) {
             
@@ -137,7 +137,7 @@ final public class PlayerMenu {
     
     public boolean isMetadata(Player player, String chatMessage) { 
         
-        int playerUuidHash = player.getUniqueId().hashCode();
+        Integer playerUuidHash = player.getUniqueId().hashCode();
         if(!this.needMetadata.containsKey(playerUuidHash)) return false;
         
         Material selectMaterial = this.needMetadata.get(playerUuidHash);

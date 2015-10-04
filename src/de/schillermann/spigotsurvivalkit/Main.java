@@ -60,7 +60,8 @@ final public class Main extends JavaPlugin {
             this.cachePlot,
             this.database.getTableChunkLog(),
             providerBank,
-            Material.getMaterial(this.getConfig().getString("currency"))
+            Material.getMaterial(this.getConfig().getString("currency")),
+            this.getConfig().getInt("plot.price_default")
         );
         
         this.onCommand(this.getConfig());

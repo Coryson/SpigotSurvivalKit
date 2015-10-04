@@ -24,23 +24,27 @@ final public class PlotProvider {
     
     final private ChunkLogTable tableChunkLog;
     
-    final private BankProvider bank;
+    final private BankProvider providerBank;
     
     final private Material currency;
+    
+    final private int plotPriceDefault;
 
     public PlotProvider(
         PlotTable tablePlot,
         PlotCache cachePlot,
         ChunkLogTable tableChunkLog,
-        BankProvider bank,
-        Material currency
+        BankProvider providerBank,
+        Material currency,
+        int plotPriceDefault
     ) {
         
         this.tablePlot = tablePlot;
         this.cachePlot = cachePlot;
         this.tableChunkLog = tableChunkLog;
-        this.bank = bank;
+        this.providerBank = providerBank;
         this.currency = currency;
+        this.plotPriceDefault = plotPriceDefault;
     }
             
     public PlotMetadata getPlotMetadata(Chunk chunk) {
@@ -50,7 +54,7 @@ final public class PlotProvider {
     
     public boolean buyPlot(Player buyer) {
         
-        int plotPrice = 1;
+        int plotPrice = this.plotPriceDefault;
         UUID buyerUuid = buyer.getUniqueId();
         Chunk chunk = buyer.getLocation().getChunk();
         
@@ -74,7 +78,7 @@ final public class PlotProvider {
             
         // Plot buy from Player
         OfflinePlayer owner = Bukkit.getOfflinePlayer(metadata.getOwner());
-        this.bank.transfer(owner.getUniqueId(), plotPrice);
+        this.providerBank.transfer(owner.getUniqueId(), plotPrice);
         
         return this.tablePlot.updateMetadata(chunk, new PlotMetadata(buyerUuid, 0));
     }
@@ -96,5 +100,9 @@ final public class PlotProvider {
         }
         
         return false;
+    }
+    
+    public int getPlotPriceDefault() {
+        return this.plotPriceDefault;   
     }
 }

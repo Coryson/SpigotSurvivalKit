@@ -63,7 +63,7 @@ final public class ChunkListener implements Listener {
 
         Player player = event.getPlayer();
         Chunk chunk = event.getBlock().getChunk();
-        
+
         event.setCancelled(this.isBuildNotAllow(player, chunk));
     }
     
@@ -72,7 +72,7 @@ final public class ChunkListener implements Listener {
 
         Player player = event.getPlayer();
         Chunk chunk = event.getBlock().getChunk();
-        
+
         event.setCancelled(this.isBuildNotAllow(player, chunk));
     }
     
@@ -125,17 +125,16 @@ final public class ChunkListener implements Listener {
     
     private boolean isBuildNotAllow(Player player, Chunk chunk) {
         
-        if(player.getWorld().getEnvironment() == World.Environment.NORMAL)
-            return true;
+        if(player.getWorld().getEnvironment() != World.Environment.NORMAL)
+            return false;
         
         UUID playerUuid = player.getUniqueId();
-        int playerUuidHash = playerUuid.hashCode();
+        Integer playerUuidHash = playerUuid.hashCode();
         
         UUID ownerUuidFromPlot = this.cachePlot.getOwnerUuidFromPlot(chunk);
 
-        // Spieler darf abbauen wenn
-        if(ownerUuidFromPlot == null) { // Plot gehört keinem
-
+        if(ownerUuidFromPlot == null) { // Player in Wilderness
+            
             this.cacheChunkLog.addChunk(chunk);
             
             if(!this.playerInWildernessList.contains(playerUuidHash)) {
@@ -144,7 +143,8 @@ final public class ChunkListener implements Listener {
             }
             return false;
         }
-        else {
+        else { // Player on Plot
+
             if(this.playerInWildernessList.contains(playerUuidHash)) {
                 player.sendMessage(this.message.getRegionPlot());
                 this.playerInWildernessList.remove(playerUuidHash);
@@ -160,10 +160,10 @@ final public class ChunkListener implements Listener {
                 ownerUuidFromPlot.equals(playerUuid) ||
                 isHelper ||
                 player.isOp();
-            
-            if(!isBuildAllow)
+
+            if(!isBuildAllow) 
                 player.sendMessage(this.message.getForbiddenBreak());
-            
+   
             return !isBuildAllow;
         }
     }

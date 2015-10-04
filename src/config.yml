@@ -4,6 +4,7 @@ chunks:
         error: "Regeneration fehlgeschlagen in Chunk X: %d Z: %d!"
         success: "%d Chunks regeneriert."
 plot:
+    price_default: 20
     forbidden:
         break: "\u00A74Aua, das tut weh. Lass das!"
         build: "\u00A74Bau wo anders!"
@@ -123,8 +124,7 @@ prisonspawn:
     x: 10
     y: 10
     z: 10
-plotprice: 1
-currency: DIAMOND
+currency: GOLD_INGOT
 cachesize:
     chunklog: 10
     plotprotect: 10
