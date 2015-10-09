@@ -8,7 +8,6 @@ import de.schillermann.spigotsurvivalkit.utils.InventoryUtil;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -26,8 +25,6 @@ final public class PlotProvider {
     
     final private BankProvider providerBank;
     
-    final private Material currency;
-    
     final private int plotPriceDefault;
 
     public PlotProvider(
@@ -35,7 +32,6 @@ final public class PlotProvider {
         PlotCache cachePlot,
         ChunkLogTable tableChunkLog,
         BankProvider providerBank,
-        Material currency,
         int plotPriceDefault
     ) {
         
@@ -43,7 +39,6 @@ final public class PlotProvider {
         this.cachePlot = cachePlot;
         this.tableChunkLog = tableChunkLog;
         this.providerBank = providerBank;
-        this.currency = currency;
         this.plotPriceDefault = plotPriceDefault;
     }
             
@@ -64,7 +59,7 @@ final public class PlotProvider {
         
         boolean paid = InventoryUtil.removeItem(
             buyer,
-            this.currency,
+            this.providerBank.GetCurrency(),
             plotPrice
         );
         

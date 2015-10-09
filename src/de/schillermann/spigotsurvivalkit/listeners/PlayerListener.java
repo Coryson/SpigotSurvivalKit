@@ -3,7 +3,6 @@ package de.schillermann.spigotsurvivalkit.listeners;
 import de.schillermann.spigotsurvivalkit.services.BankProvider;
 import de.schillermann.spigotsurvivalkit.services.Stats;
 import de.schillermann.spigotsurvivalkit.utils.InventoryUtil;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 final public class PlayerListener implements Listener {
     
-    final private BankProvider bank;
+    final private BankProvider providerBank;
     
     final private Stats stats;
     
@@ -25,12 +24,12 @@ final public class PlayerListener implements Listener {
     final private JoinMessage message;
     
     public PlayerListener(
-        BankProvider bank,
+        BankProvider providerBank,
         Stats stats,
         Hospital deathSpawn,
         JoinMessage message) {
   
-        this.bank = bank;
+        this.providerBank = providerBank;
         this.stats = stats;
         this.deathSpawn = deathSpawn;
         this.message = message;
@@ -42,13 +41,20 @@ final public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         if(player.hasPlayedBefore()) {
-            int playerBalance = this.bank.getBalance(player.getUniqueId());
+            int playerBalance = this.providerBank.getBalance(player.getUniqueId());
 
             if(playerBalance > 0) {
                 
-                if(InventoryUtil.addItem(player, Material.DIAMOND, playerBalance)) {
+                boolean addedItem =
+                    InventoryUtil.addItem(
+                        player,
+                        this.providerBank.GetCurrency(),
+                        playerBalance
+                    );
+                
+                if(addedItem) {
                     
-                    this.bank.setBalance(player.getUniqueId(), 0);
+                    this.providerBank.setBalance(player.getUniqueId(), 0);
                     player.sendMessage(this.message.getMoney(playerBalance));
                 }
                 else {

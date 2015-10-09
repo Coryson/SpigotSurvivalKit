@@ -29,17 +29,17 @@ command:
             success: "\u00A7aGrundstück ist freigegeben."
             error: "\u00A74Grundstück konnte nicht freigegeben werden!"
     bank:
-        transfer: "\u00A72%d Diamant \u00A7awurden an den Spieler \u00A72%s \u00A7aüberwiesen."
-        balance: "\u00A7aKontostand: \u00A72%d Diamant"
+        transfer: "\u00A72%d Goldbarren \u00A7awurden an den Spieler \u00A72%s \u00A7aüberwiesen."
+        balance: "\u00A7aKontostand: \u00A72%d Goldbarren"
 stats:
     number: 3
     headline: "\u00A76*** Die reichsten Spieler ***"
-    row: "\u00A7e%s %d Diamanten"
+    row: "\u00A7e%s %d Goldbarren"
 join:
     first: "\u00A76***************************************************\n* \u00A7eBau dir ein Stock, um damit dein Menü zu öffnen.\n\u00A76***************************************************"
     normally: "\u00A7e %s is in the House!"
-    inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Diamanten!"
-    money: "\u00A76Du hast \u00A7e%d Diamant \u00A76von der Bank bekommen."
+    inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Goldbarren!"
+    money: "\u00A7eDu hast \u00A76%d Goldbarren \u00A7evon der Bank bekommen."
 playermenu:
     open_with_item: STICK
     menu_title: Spieler Menü
@@ -48,18 +48,18 @@ playermenu:
             material: GRASS
             title: Grundstück kaufen
             owner: "Besitzer: %s"
-            price: "Preis: %d Diamant"
+            price: "Preis: %d Goldbarren"
         plot_sell:
-            material: DIAMOND
+            material: GOLD_INGOT
             title: Grundstück verkaufen
             description:
             - Sobald ein Spieler dein
             - Grundstück gekauft hat,
-            - bekommst du die Diamanten.
+            - bekommst du die Goldbarren.
         plot_sell_cancel:
             material: BARRIER
             title: Verkauf abbrechen
-            description: "Verkaufspreis: %d Diamant"
+            description: "Verkaufspreis: %d Goldbarren"
         plot_owner:
             material: STONE_SLAB2
             title: "Besitzer: %s"
@@ -96,16 +96,16 @@ playermenu:
         no_bed_spawn: "\u00A74Du hast dich noch in keinem Bed schlafen gelegt!"
         plot:
             sell:
-                release: "\u00A7aDas Grundstück ist für \u00A72%d Diamanten \u00A7azum Verkauft freigegeben."
+                release: "\u00A7aDas Grundstück ist für \u00A72%d Goldbarren \u00A7azum Verkauft freigegeben."
                 price:
-                    input: "\u00A7eWieviel Diamanten möchtest du für dein Grundstück haben:"
-                    error: "\u00A74Mindestens 1 Diamant musst du eintragen!"
+                    input: "\u00A7eWieviel Goldbarren möchtest du für dein Grundstück haben:"
+                    error: "\u00A74Mindestens 1 Goldbarren musst du eintragen!"
             sell_cancel:
                 success: "\u00A7aGrundstück Verkauft ist zurückgenommen."
                 error: "\u00A74Grundstück Verkauft konnte nicht zurück genommen werden!"
             buy:
                 success: "\u00A7aJetzt gehört dir das Grundstück. \u00A7fPvP ist hier ausgeschaltet."
-                broke: "\u00A74Du hast kein Diamant um das Grundstück bezahlen zu können!"
+                broke: "\u00A74Du hast kein Goldbarren um das Grundstück bezahlen zu können!"
         helper:
             name: "\u00A7eWie heisst der Bauhelfer den du ein oder austragen möchtest:"
             add: "\u00A7aBauhelfer \u00A72%s \u00A7aist willig zum Arbeiten."
@@ -125,6 +125,9 @@ prisonspawn:
     y: 10
     z: 10
 currency: GOLD_INGOT
+vote:
+    price: 1
+    thanks: "\u00A76%s \u00A7edanke fuer dein Voting. Du bekommst \u00A76%d\u00A76 Goldbarren."
 cachesize:
     chunklog: 10
     plotprotect: 10

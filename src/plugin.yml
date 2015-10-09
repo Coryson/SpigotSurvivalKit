@@ -1,6 +1,7 @@
 name: SpigotSurvivalKit
 main: de.schillermann.spigotsurvivalkit.Main
-version: 0.3
+version: 0.4
+softdepend: [Votifier] 
 commands:
     jail:
         usage: /<command> <player>

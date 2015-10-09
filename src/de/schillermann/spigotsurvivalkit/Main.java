@@ -53,14 +53,16 @@ final public class Main extends JavaPlugin {
                 
         this.onCache(this.getConfig());
         
-        this.providerBank = new BankProvider(this.database.getTableBank());
+        this.providerBank = new BankProvider(
+            this.database.getTableBank(),
+            Material.getMaterial(this.getConfig().getString("currency"))
+        );
         
         this.providerPlot = new PlotProvider(
             this.database.getTablePlot(),
             this.cachePlot,
             this.database.getTableChunkLog(),
             providerBank,
-            Material.getMaterial(this.getConfig().getString("currency")),
             this.getConfig().getInt("plot.price_default")
         );
         
@@ -188,5 +190,24 @@ final public class Main extends JavaPlugin {
         );
         
         pm.registerEvents(menu, this);
+        
+        boolean enabledVotifier =
+            this.getServer().getPluginManager().isPluginEnabled("Votifier");
+        
+        if(enabledVotifier) {
+            VoteListener vote = new VoteListener(
+                this.providerBank,
+                config.getInt("vote.price"),
+                config.getString("vote.thanks")
+            );
+
+            pm.registerEvents(vote, this);
+        }
+        else {
+            String infoMsg =
+                "[%s] Plugin Votifier is missing for the vote function";
+            
+            Bukkit.getLogger().info(String.format(infoMsg, this.getName()));
+        }
     }
 }

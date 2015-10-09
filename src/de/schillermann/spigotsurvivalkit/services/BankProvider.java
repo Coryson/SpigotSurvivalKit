@@ -2,6 +2,7 @@ package de.schillermann.spigotsurvivalkit.services;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.BankTable;
 import java.util.UUID;
+import org.bukkit.Material;
 
 /**
  *
@@ -11,8 +12,11 @@ final public class BankProvider {
     
     final private BankTable bank;
     
-    public BankProvider(BankTable bank) {
+    final private Material currency;
+    
+    public BankProvider(BankTable bank, Material currency) {
         this.bank = bank;
+        this.currency = currency;
     }
     
     public boolean transfer(UUID receiver, int price) {
@@ -26,6 +30,10 @@ final public class BankProvider {
             
     }
     
+    public boolean setBalance(UUID owner, int price) {
+        return this.bank.updateBalance(owner, price);
+    }
+    
     public int getBalance(UUID owner) {
         int balance = this.bank.selectBalance(owner);
         
@@ -35,7 +43,7 @@ final public class BankProvider {
             return 0;
     }
     
-    public boolean setBalance(UUID owner, int price) {
-        return this.bank.updateBalance(owner, price);
+    public Material GetCurrency() {
+        return this.currency;
     }
 }

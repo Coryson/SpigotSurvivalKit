@@ -30,6 +30,8 @@ final public class PlayerMenu {
     
     final private HelperCache helperCache;
     
+    final private String bankName = "Bank";
+    
     /**
      * <player uuid hashcode, selected material>
      */
@@ -122,17 +124,10 @@ final public class PlayerMenu {
             player.teleport(player.getWorld().getSpawnLocation());
         }
 
-        Bukkit.getScheduler().runTask(
-            this.plugin,
-            new Runnable() {
-                @Override
-                public void run() {
-                   
-                    Player p = Bukkit.getPlayer(playerUuid);
-                    if (p != null) p.closeInventory();
-                }
-            }
-        );
+        Bukkit.getScheduler().runTask(this.plugin, () -> {
+            Player p = Bukkit.getPlayer(playerUuid);
+            if (p != null) p.closeInventory();
+        });
     }
     
     public boolean isMetadata(Player player, String chatMessage) { 
@@ -176,7 +171,10 @@ final public class PlayerMenu {
         PlotMetadata metadata = this.plot.getPlotMetadata(chunk);
         
         if(metadata == null) {
-            return this.itemPalette.getPlotBuy("Bank", 1);
+         
+            return this.itemPalette.getPlotBuy(
+                this.bankName, this.plot.getPlotPriceDefault()
+            );
         }
             
         UUID owner = metadata.getOwner();
