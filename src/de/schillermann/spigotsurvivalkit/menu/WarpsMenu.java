@@ -16,16 +16,17 @@ import org.bukkit.inventory.InventoryHolder;
  */
 final public class WarpsMenu implements PlayerMenu {
     
-    final private String title;
-    
     final private WarpTable tableWarp;
+    
+    final private WarpsMenuMessage message;
     
     private Inventory menu;
     
-    public WarpsMenu(String title, WarpTable tableWarp) {
+    public WarpsMenu(WarpTable tableWarp, WarpsMenuMessage message) {
         
-        this.title = title;
         this.tableWarp = tableWarp;
+        this.message = message;
+        
         this.reloadInventory();
     }
     
@@ -44,7 +45,7 @@ final public class WarpsMenu implements PlayerMenu {
         this.menu = Bukkit.createInventory(
             new WarpsMenuHolder(),
             numbersOfSlot,
-            this.title
+            this.message.getMenuTitle()
         );
         
         this.menu.addItem(items.getItems());
@@ -59,6 +60,18 @@ final public class WarpsMenu implements PlayerMenu {
     public InventoryHolder inventoryItemAction(Player player, String selectedItemName) {
         
         WarpLocation warpLocation = this.tableWarp.selectWarp(selectedItemName);
+        
+        if(selectedItemName.equals(this.message.getItemBedName())) {
+            
+            if(player.getBedSpawnLocation() == null) {
+                player.sendMessage(this.message.getItemBedError());
+            }
+            else {
+                player.teleport(player.getBedSpawnLocation());
+                player.sendMessage(ChatColor.YELLOW + warpLocation.getDescription());
+            }
+            return null;
+        }
         
         Location teleportLocation = new Location(
             Bukkit.getWorld(warpLocation.getWorld()),

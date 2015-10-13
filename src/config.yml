@@ -42,7 +42,6 @@ stats:
     headline: "\u00A76*** Die reichsten Spieler ***"
     row: "\u00A7e%s %d Goldbarren"
 join:
-    first: "\u00A76***************************************************\n* \u00A7eBau dir ein Stock, um damit dein Menü zu öffnen.\n\u00A76***************************************************"
     normally: "\u00A7e %s is in the House!"
     inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Goldbarren!"
     money: "\u00A7eDu hast \u00A76%d Goldbarren \u00A7evon der Bank bekommen."
@@ -102,7 +101,6 @@ mainmenu:
             - Entfernungen mit
             - den Warps
     action:
-        no_bed_spawn: "\u00A74Du hast dich noch in keinem Bed schlafen gelegt!"
         plot:
             sell:
                 release: "\u00A7aDas Grundstück ist für \u00A72%d Goldbarren \u00A7azum Verkauft freigegeben."
@@ -126,9 +124,14 @@ mainmenu:
         - http://www.minecraft-serverlist.net/server/16594
 warpsmenu:
     menu_title: Warps Menü
-warps:
-    respawn: Hospital
-    firstjoin: Spawn
+    items:
+        respawn:
+            name: Hospital
+        firstjoin:
+            name: Spawn
+        bed:
+            name: Bett
+            error: "\u00A74Du hast dich noch in keinem Bed schlafen gelegt!"
 currency: GOLD_INGOT
 vote:
     price: 1

@@ -142,8 +142,8 @@ final public class Main extends JavaPlugin {
         );
         
         WarpsMenu menuWarps = new WarpsMenu(
-            config.getString("warpsmenu.menu_title"),
-            this.database.getTableWarp()    
+            this.database.getTableWarp(),
+            new WarpsMenuMessage(config)
         );
         
         RemoveWarpCommand removeWarpCommand = new RemoveWarpCommand(
@@ -171,8 +171,10 @@ final public class Main extends JavaPlugin {
         
         pm.registerEvents(menu, this);
         
-        String warpsFirstJoinName = config.getString("warps.firstjoin");
-        String warpsRespawnName = config.getString("warps.respawn");
+        String warpsFirstJoinName =
+            config.getString("warpsmenu.items.firstjoin.name");
+        String warpsRespawnName =
+            config.getString("warpsmenu.items.respawn.name");
         
         WarpLocation locationFirstJoin =
             this.database.getTableWarp().selectWarp(warpsFirstJoinName);
@@ -180,28 +182,17 @@ final public class Main extends JavaPlugin {
         WarpLocation locationRespawn =
             this.database.getTableWarp().selectWarp(warpsRespawnName);
         
-        if(locationFirstJoin == null) {
+        if(locationFirstJoin == null || locationRespawn == null) {
             
             Bukkit.getLogger().info(
                 String.format(
-                    "[%s] The warp %s is not set for the first player join",
+                    "[%s] Any warp is not set from config.yml",
                     this.getName(),
                     warpsFirstJoinName
                 )
             );
         }
         
-        if(locationRespawn == null) {
-            
-            Bukkit.getLogger().info(
-                String.format(
-                    "[%s] The warp %s is not set for respawn after player death",
-                    this.getName(),
-                    warpsRespawnName
-                )
-            );
-        }
-
         DefaultWarps defaultWarps =
             new DefaultWarps(locationFirstJoin, locationRespawn);
         

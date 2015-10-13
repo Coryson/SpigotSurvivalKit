@@ -67,10 +67,16 @@ final public class PlayerListener implements Listener {
         else if(this.warps.getWarpFirstJoin() != null) {
             
             player.teleport(this.warps.getWarpFirstJoin().getLocation());
+            String border =
+                ChatColor.GOLD +
+                "***************************************************";
+            
+            player.sendMessage(border);
             player.sendMessage(
                 ChatColor.YELLOW +
                 this.warps.getWarpFirstJoin().getMessage()
             );
+            player.sendMessage(border);
         }
         
         String RichestPlayers = stats.getRichestPlayers();
