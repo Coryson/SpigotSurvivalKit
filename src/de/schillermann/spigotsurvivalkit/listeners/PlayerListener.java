@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -23,19 +22,19 @@ final public class PlayerListener implements Listener {
     
     final private JoinMessage message;
     
-    final private RespawnWarp warpDeath;
+    final private DefaultWarps warps;
     
     public PlayerListener(
         BankProvider providerBank,
         Stats stats,
         JoinMessage message,
-        RespawnWarp warpDeath
+        DefaultWarps warps
     ) {
   
         this.providerBank = providerBank;
         this.stats = stats;
         this.message = message;
-        this.warpDeath = warpDeath;
+        this.warps = warps;
     }
     
     @EventHandler
@@ -65,8 +64,14 @@ final public class PlayerListener implements Listener {
                 }
             }
         }
-        else
-            player.sendMessage(this.message.getFirst());
+        else if(this.warps.getWarpFirstJoin() != null) {
+            
+            player.teleport(this.warps.getWarpFirstJoin().getLocation());
+            player.sendMessage(
+                ChatColor.YELLOW +
+                this.warps.getWarpFirstJoin().getMessage()
+            );
+        }
         
         String RichestPlayers = stats.getRichestPlayers();
         if(RichestPlayers != null)
@@ -77,12 +82,16 @@ final public class PlayerListener implements Listener {
     
     @EventHandler
     public void onPlayerDeath(PlayerRespawnEvent event) {
-        
-        if(this.warpDeath != null) {
-            event.setRespawnLocation(this.warpDeath.getLocation());
+       
+        if(this.warps.getWarpRespawn() != null) {
+            
+            event.setRespawnLocation(this.warps.getWarpRespawn().getLocation());
             
             Player player = event.getPlayer();
-            player.sendMessage(ChatColor.YELLOW + this.warpDeath.getMessage());
+            player.sendMessage(
+                ChatColor.YELLOW +
+                this.warps.getWarpRespawn().getMessage()
+            );
         }
     }
 }

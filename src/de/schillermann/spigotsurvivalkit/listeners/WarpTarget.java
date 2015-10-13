@@ -8,13 +8,13 @@ import org.bukkit.Location;
  *
  * @author Mario Schillermann
  */
-final public class RespawnWarp {
+final public class WarpTarget {
     
     final private Location location;
     
     final private String message;
     
-    public RespawnWarp(WarpLocation location) {
+    public WarpTarget(WarpLocation location) {
         
         this.location = new Location(
             Bukkit.getWorld(location.getWorld()),

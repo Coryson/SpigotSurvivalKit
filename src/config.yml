@@ -126,7 +126,9 @@ mainmenu:
         - http://www.minecraft-serverlist.net/server/16594
 warpsmenu:
     menu_title: Warps Menü
-warp_respawn: Hospital
+warps:
+    respawn: Hospital
+    firstjoin: Spawn
 currency: GOLD_INGOT
 vote:
     price: 1

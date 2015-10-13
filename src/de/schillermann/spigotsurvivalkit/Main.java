@@ -171,31 +171,45 @@ final public class Main extends JavaPlugin {
         
         pm.registerEvents(menu, this);
         
-        String warpRespawnName = config.getString("warp_respawn");
-        WarpLocation location =
-            this.database.getTableWarp().selectWarp(warpRespawnName);
+        String warpsFirstJoinName = config.getString("warps.firstjoin");
+        String warpsRespawnName = config.getString("warps.respawn");
         
-        RespawnWarp respawnWarp = null;
+        WarpLocation locationFirstJoin =
+            this.database.getTableWarp().selectWarp(warpsFirstJoinName);
         
-        if(location == null) {
+        WarpLocation locationRespawn =
+            this.database.getTableWarp().selectWarp(warpsRespawnName);
+        
+        if(locationFirstJoin == null) {
+            
+            Bukkit.getLogger().info(
+                String.format(
+                    "[%s] The warp %s is not set for the first player join",
+                    this.getName(),
+                    warpsFirstJoinName
+                )
+            );
+        }
+        
+        if(locationRespawn == null) {
             
             Bukkit.getLogger().info(
                 String.format(
                     "[%s] The warp %s is not set for respawn after player death",
                     this.getName(),
-                    warpRespawnName
+                    warpsRespawnName
                 )
             );
         }
-        else {
-            respawnWarp = new RespawnWarp(location);
-        }
 
+        DefaultWarps defaultWarps =
+            new DefaultWarps(locationFirstJoin, locationRespawn);
+        
         PlayerListener player = new PlayerListener(
             this.providerBank,
             new Stats(this.database.getTableStats(), new StatsConfig(config)),
             new JoinMessage(config),
-            respawnWarp
+            defaultWarps
         );
         pm.registerEvents(player, this);
         
