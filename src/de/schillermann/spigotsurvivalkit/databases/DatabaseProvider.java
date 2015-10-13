@@ -6,6 +6,7 @@ import de.schillermann.spigotsurvivalkit.databases.tables.HelperTable;
 import de.schillermann.spigotsurvivalkit.databases.tables.LockTable;
 import de.schillermann.spigotsurvivalkit.databases.tables.PlotTable;
 import de.schillermann.spigotsurvivalkit.databases.tables.StatsTable;
+import de.schillermann.spigotsurvivalkit.databases.tables.WarpTable;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,6 +34,8 @@ final public class DatabaseProvider {
     private StatsTable tableStats;
     
     private BankTable tableBank;
+    
+    private WarpTable tableWarp;
     
     public boolean isInitialize() {
     
@@ -63,13 +66,15 @@ final public class DatabaseProvider {
         this.tableLock = new LockTable(this.connection);
         this.tableStats = new StatsTable(this.connection);
         this.tableBank = new BankTable(this.connection);
+        this.tableWarp = new WarpTable(this.connection);
 
         return !(!this.tablePlot.createTable() ||
                 !this.tableHelper.createTable() ||
                 !this.tableChunkLog.createTable() ||
                 !this.tableLock.createTable() ||
                 !this.tableStats.createTable() ||
-                !this.tableBank.createTable());
+                !this.tableBank.createTable() ||
+                !this.tableWarp.createTable());
     }
     
     public void close() {
@@ -110,5 +115,9 @@ final public class DatabaseProvider {
     
     public BankTable getTableBank() {
         return this.tableBank;
+    }
+    
+    public WarpTable getTableWarp() {
+        return this.tableWarp;
     }
 }

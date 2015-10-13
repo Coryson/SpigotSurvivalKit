@@ -10,7 +10,7 @@ plot:
         build: "\u00A74Bau wo anders!"
         pvp:
             attacker: "\u00A74Schützt den König!"
-            affected: "\u00A7eKein PvP auf Grundstücken."
+            affected: "\u00A7eKein \u00A76PvP \u00A7eauf Grundstücken."
     region:
         wilderness: "\u00A74Du bist in der Wildnis. \u00A7cDiese wird regelmässig gelöscht!"
         plot: "\u00A7eDu bist auf deinem Grundstück. \u00A76Dein Bauwerk ist gesichert."
@@ -31,6 +31,12 @@ command:
     bank:
         transfer: "\u00A72%d Goldbarren \u00A7awurden an den Spieler \u00A72%s \u00A7aüberwiesen."
         balance: "\u00A7aKontostand: \u00A72%d Goldbarren"
+    setwarp:
+        success: "\u00A7aDer Warp \u00A72%s \u00A7awurde erstellt."
+        error: "\u00A74Der Warp \u00A7c%s \u00A74kann hier nicht erstellt werden!"
+    removewarp:
+        success: "\u00A7aDer Warp \u00A72%s \u00A7awurde entfernt."
+        error: "\u00A74Der Warp \u00A7c%s \u00A74konnte nicht entfernt werden!"
 stats:
     number: 3
     headline: "\u00A76*** Die reichsten Spieler ***"
@@ -40,29 +46,31 @@ join:
     normally: "\u00A7e %s is in the House!"
     inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Goldbarren!"
     money: "\u00A7eDu hast \u00A76%d Goldbarren \u00A7evon der Bank bekommen."
-playermenu:
+mainmenu:
     open_with_item: STICK
     menu_title: Spieler Menü
     items:
         plot_buy:
             material: GRASS
-            title: Grundstück kaufen
-            owner: "Besitzer: %s"
-            price: "Preis: %d Goldbarren"
+            name: Grundstück kaufen
+            description:
+            - "Besitzer: %s"
+            - "Preis: %d Goldbarren"
         plot_sell:
             material: GOLD_INGOT
-            title: Grundstück verkaufen
+            name: Grundstück verkaufen
             description:
             - Sobald ein Spieler dein
             - Grundstück gekauft hat,
             - bekommst du die Goldbarren.
         plot_sell_cancel:
             material: BARRIER
-            title: Verkauf abbrechen
-            description: "Verkaufspreis: %d Goldbarren"
+            name: Verkauf abbrechen
+            description:
+            - "Verkaufspreis: %d Goldbarren"
         plot_owner:
             material: STONE_SLAB2
-            title: "Besitzer: %s"
+            name: "Besitzer: %s"
             description:
             - Lass dich als
             - Bauhelfer eintragen.
@@ -70,28 +78,29 @@ playermenu:
             - Du bist Bauhelfer
             - und darfst hier
             - mitbauen.
-        helper:
-            material: SKULL_ITEM
-            title: Bauhelfer
+        helpers:
+            material: GOLD_HELMET
+            name: Bauhelfer
             description:
             - Keine Bauhelfer
             - eingetragen.
             - Klick hier um
             - Bauhelfer ein-
             - oder auszutragen.
-        teleport_to_spawn:
-            material: BEACON
-            title: Spawn Teleport
+        votelinks:
+            material: RED_ROSE
+            name: Vote Links
             description:
-            - Teleportiert dich
-            - zum Spawn.
-        teleport_to_bed:
-            material: BED
-            title: Bett Teleport
+            - Du bekommst
+            - 1 Goldbarren
+            - als Dankeschön
+        warps:
+            material: ENDER_PEARL
+            name: Warps
             description:
-            - Teleportiert dich zu
-            - deinem Bett, in dem du
-            - zuletzt geschlafen hast.
+            - Überwinde grosse
+            - Entfernungen mit
+            - den Warps
     action:
         no_bed_spawn: "\u00A74Du hast dich noch in keinem Bed schlafen gelegt!"
         plot:
@@ -105,25 +114,19 @@ playermenu:
                 error: "\u00A74Grundstück Verkauft konnte nicht zurück genommen werden!"
             buy:
                 success: "\u00A7aJetzt gehört dir das Grundstück. \u00A7fPvP ist hier ausgeschaltet."
-                broke: "\u00A74Du hast kein Goldbarren um das Grundstück bezahlen zu können!"
+                broke: "\u00A74Du hast nicht genug Goldbarren um das Grundstück bezahlen zu können!"
         helper:
             name: "\u00A7eWie heisst der Bauhelfer den du ein oder austragen möchtest:"
             add: "\u00A7aBauhelfer \u00A72%s \u00A7aist willig zum Arbeiten."
             remove: "\u00A7aBauhelfer \u00A72%s \u00A7awurde gekündigt."
             inform_helper: "\u00A7eDu kannst \u00A76%s \u00A7ejetzt beim bauen helfen."
             player_no_exists: "\u00A74Der Spieler \u00A7c%s \u00A74existiert nicht!"
-hospital:
-    info: "\u00A7eDer Arzt hat dich, zum Glück, wieder zusammen flicken können."
-    world: world
-    x: 10
-    y: 10
-    z: 10
-prisonspawn:
-    broadcast: "\u00A7eDer Betrüger \u00A76%s \u00A7ewurde erwischt! \u00A76Ihr könnt ihn im Gefängnis besuchen."
-    world: world
-    x: 10
-    y: 10
-    z: 10
+        votelist:
+        - "\u00A76***************************************************\n* \u00A7eVote Links\n\u00A76***************************************************"
+        - http://www.minecraft-serverlist.net/server/16594
+warpsmenu:
+    menu_title: Warps Menü
+warp_respawn: Hospital
 currency: GOLD_INGOT
 vote:
     price: 1

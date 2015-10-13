@@ -3,11 +3,13 @@ package de.schillermann.spigotsurvivalkit.listeners;
 import de.schillermann.spigotsurvivalkit.services.BankProvider;
 import de.schillermann.spigotsurvivalkit.services.Stats;
 import de.schillermann.spigotsurvivalkit.utils.InventoryUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 /**
  *
@@ -19,20 +21,21 @@ final public class PlayerListener implements Listener {
     
     final private Stats stats;
     
-    final private Hospital deathSpawn;
-    
     final private JoinMessage message;
+    
+    final private RespawnWarp warpDeath;
     
     public PlayerListener(
         BankProvider providerBank,
         Stats stats,
-        Hospital deathSpawn,
-        JoinMessage message) {
+        JoinMessage message,
+        RespawnWarp warpDeath
+    ) {
   
         this.providerBank = providerBank;
         this.stats = stats;
-        this.deathSpawn = deathSpawn;
         this.message = message;
+        this.warpDeath = warpDeath;
     }
     
     @EventHandler
@@ -73,10 +76,13 @@ final public class PlayerListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
+    public void onPlayerDeath(PlayerRespawnEvent event) {
         
-        Player player = event.getEntity();
-        player.teleport(this.deathSpawn.getLocation());
-        player.sendMessage(this.deathSpawn.getinfo());
+        if(this.warpDeath != null) {
+            event.setRespawnLocation(this.warpDeath.getLocation());
+            
+            Player player = event.getPlayer();
+            player.sendMessage(ChatColor.YELLOW + this.warpDeath.getMessage());
+        }
     }
 }

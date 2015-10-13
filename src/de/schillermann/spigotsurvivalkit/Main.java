@@ -1,25 +1,17 @@
 package de.schillermann.spigotsurvivalkit;
 
-import de.schillermann.spigotsurvivalkit.services.PlotProvider;
 import de.schillermann.spigotsurvivalkit.cache.*;
-import de.schillermann.spigotsurvivalkit.commands.BankCommand;
-import de.schillermann.spigotsurvivalkit.commands.BankCommandMessage;
-import de.schillermann.spigotsurvivalkit.commands.PlotCommand;
-import de.schillermann.spigotsurvivalkit.commands.PlotCommandMessage;
+import de.schillermann.spigotsurvivalkit.commands.*;
 import de.schillermann.spigotsurvivalkit.listeners.*;
 import de.schillermann.spigotsurvivalkit.menu.*;
-import de.schillermann.spigotsurvivalkit.commands.PrisonCommand;
+import de.schillermann.spigotsurvivalkit.services.*;
 import de.schillermann.spigotsurvivalkit.databases.DatabaseProvider;
-import de.schillermann.spigotsurvivalkit.menu.PlayerMenuListener;
-import de.schillermann.spigotsurvivalkit.menu.PlayerMenu;
-import de.schillermann.spigotsurvivalkit.listeners.PlotMessage;
-import de.schillermann.spigotsurvivalkit.services.BankProvider;
-import de.schillermann.spigotsurvivalkit.services.Stats;
-import de.schillermann.spigotsurvivalkit.services.StatsConfig;
+import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
 import de.schillermann.spigotsurvivalkit.utils.ChunkRegeneration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,8 +34,8 @@ final public class Main extends JavaPlugin {
     public void onEnable(){
         
         this.getConfig().options().copyDefaults(true);
-        saveConfig();
-        
+        this.saveConfig();
+         
         this.database = new DatabaseProvider();
         
         if(!this.database.isInitialize()) {
@@ -69,8 +61,8 @@ final public class Main extends JavaPlugin {
         this.onCommand(this.getConfig());
         
         this.onListener(
-            this.getServer().getPluginManager(),
-            this.getConfig()
+            this.getConfig(),
+            this.getServer().getPluginManager()
         );
         
         Bukkit.getScheduler().runTask(
@@ -108,22 +100,7 @@ final public class Main extends JavaPlugin {
     }
     
     private void onCommand(FileConfiguration config) {
-        
-        Location prisonLocation = new Location(
-            Bukkit.getWorld(config.getString("prisonspawn.world")),
-            config.getInt("prisonspawn.x"),
-            config.getInt("prisonspawn.y"),
-            config.getInt("prisonspawn.z")
-        );
-        
-        PrisonCommand prisonCommand = new PrisonCommand(
-            prisonLocation,
-            config.getString("prisonspawn.broadcast"),
-            config.getString("player_not_found")
-        );
-        
-        this.getCommand("jail").setExecutor(prisonCommand);
-        
+
         BankCommand bankCommand = new BankCommand(
             this.providerBank,
             new BankCommandMessage(config)
@@ -138,8 +115,8 @@ final public class Main extends JavaPlugin {
     }
     
     private void onListener(
-        PluginManager pm,
-        FileConfiguration config
+        FileConfiguration config,
+        PluginManager pm
     ) {
         
         ChunkListener chunk = new ChunkListener(
@@ -150,46 +127,77 @@ final public class Main extends JavaPlugin {
         );
         pm.registerEvents(chunk, this);
         
-        Location deathLocation = new Location(
-            Bukkit.getWorld(config.getString("hospital.world")),
-            config.getInt("hospital.x"),
-            config.getInt("hospital.y"),
-            config.getInt("hospital.z")
-        );
-        
-        Hospital hospital = new Hospital(
-            deathLocation,
-            config.getString("hospital.info")
-        );
-        
-        PlayerListener player = new PlayerListener(
-            this.providerBank,
-            new Stats(this.database.getTableStats(), new StatsConfig(config)),
-            hospital,
-            new JoinMessage(config)
-        );
-        pm.registerEvents(player, this);
-        
         LockListener lock = new LockListener(
             this.database.getTableLock(),
             new LockMessage(config)
         );
         pm.registerEvents(lock, this);
         
-        PlayerMenu playerMenu = new PlayerMenu(
+        MainMenu menuMain = new MainMenu(
             this,
-            new PlayerMenuItemPalette(config),
-            new PlayerMenuMessage(config),
+            new MainMenuItems(config),
+            new MainMenuMessage(config),
             this.providerPlot,
             this.cacheHelper
         );
         
+        WarpsMenu menuWarps = new WarpsMenu(
+            config.getString("warpsmenu.menu_title"),
+            this.database.getTableWarp()    
+        );
+        
+        RemoveWarpCommand removeWarpCommand = new RemoveWarpCommand(
+            this.database.getTableWarp(),
+            new RemoveWarpCommandMessage(config),
+            menuWarps
+        );
+        
+        this.getCommand("removewarp").setExecutor(removeWarpCommand);
+        
+        SetWarpCommand setWarpCommand = new SetWarpCommand(
+            this.database.getTableWarp(),
+            new SetWarpCommandMessage(config),
+            menuWarps
+        );
+        
+        this.getCommand("setwarp").setExecutor(setWarpCommand);
+        
         PlayerMenuListener menu = new PlayerMenuListener(
-            Material.getMaterial(config.getString("playermenu.open_with_item")),
-            playerMenu
+            this,
+            Material.getMaterial(config.getString("mainmenu.open_with_item")),
+            menuMain,
+            menuWarps
         );
         
         pm.registerEvents(menu, this);
+        
+        String warpRespawnName = config.getString("warp_respawn");
+        WarpLocation location =
+            this.database.getTableWarp().selectWarp(warpRespawnName);
+        
+        RespawnWarp respawnWarp = null;
+        
+        if(location == null) {
+            
+            Bukkit.getLogger().info(
+                String.format(
+                    "[%s] The warp %s is not set for respawn after player death",
+                    this.getName(),
+                    warpRespawnName
+                )
+            );
+        }
+        else {
+            respawnWarp = new RespawnWarp(location);
+        }
+
+        PlayerListener player = new PlayerListener(
+            this.providerBank,
+            new Stats(this.database.getTableStats(), new StatsConfig(config)),
+            new JoinMessage(config),
+            respawnWarp
+        );
+        pm.registerEvents(player, this);
         
         boolean enabledVotifier =
             this.getServer().getPluginManager().isPluginEnabled("Votifier");

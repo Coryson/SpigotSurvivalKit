@@ -30,7 +30,7 @@ final public class PlotCommand implements CommandExecutor {
         String label,
         String[] args
     ) {
-        if(args.length == 0) return false;
+        if(args.length == 0 || !(sender instanceof Player)) return false;
         
         Player player = (Player) sender;
         Chunk chunk = player.getLocation().getChunk();

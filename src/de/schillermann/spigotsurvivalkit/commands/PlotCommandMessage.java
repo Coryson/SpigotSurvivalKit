@@ -14,10 +14,10 @@ final public class PlotCommandMessage {
     
     public PlotCommandMessage(FileConfiguration config) {
         
-        String releasePath = "command.plot.release.";
+        String rootPath = "command.plot.release.";
         
-        this.releaseSuccess = config.getString(releasePath + "success");
-        this.releaseError = config.getString(releasePath + "error");
+        this.releaseSuccess = config.getString(rootPath + "success");
+        this.releaseError = config.getString(rootPath + "error");
     }
     
     public String getReleaseSuccess() {

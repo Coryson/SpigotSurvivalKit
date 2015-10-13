@@ -1,12 +1,13 @@
 package de.schillermann.spigotsurvivalkit.menu;
 
+import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
  * @author Mario Schillermann
  */
-final public class PlayerMenuMessage {
+final public class MainMenuMessage {
     
     final private String helperAdd;
     
@@ -36,12 +37,16 @@ final public class PlayerMenuMessage {
     
     final private String plotBuyBroke;
     
-    public PlayerMenuMessage(FileConfiguration config) {
+    final private List<String> voteList;
+    
+    public MainMenuMessage(FileConfiguration config) {
         
-        this.menuTitle = config.getString("playermenu.menu_title");
+        this.menuTitle = config.getString("mainmenu.menu_title");
         
-        String rootPath = "playermenu.action.";
+        String rootPath = "mainmenu.action.";
         this.noBedSpawn = config.getString(rootPath + "no_bed_spawn");
+        
+        this.voteList = config.getStringList(rootPath + "votelist");
         
         String sellPath = rootPath + "plot.sell.";
         this.plotSellRelease = config.getString(sellPath + "release");
@@ -112,6 +117,10 @@ final public class PlayerMenuMessage {
     
     public String getNoBedSpawn() {
         return this.noBedSpawn;
+    }
+    
+    public List<String> getVoteList() {
+        return this.voteList;
     }
     
     public String getMenuTitle() {

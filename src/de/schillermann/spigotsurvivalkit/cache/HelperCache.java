@@ -14,6 +14,8 @@ import org.bukkit.Bukkit;
  */
 final public class HelperCache {
     
+    public enum HelperAction { NONE, DELETE, INSERT }
+    
     final private HelperTable helper;
     final private int cacheSize;
     private int[] playerHelperHashList;
@@ -33,14 +35,14 @@ final public class HelperCache {
         this.index = 0;
     }
     
-    public int editHelperFromPlayer(UUID player, UUID helper) {
+    public HelperAction editHelperFromPlayer(UUID player, UUID helper) {
         
-        int result = -1;
+        HelperAction result = HelperAction.NONE;
         
         if(this.helper.deleteHelper(player, helper))
-            result = 1;   
+            result = HelperAction.DELETE;   
         else if(this.helper.insertHelper(player, helper))
-            result = 2;
+            result = HelperAction.INSERT;
         
         this.clear();
         return result;
@@ -60,8 +62,9 @@ final public class HelperCache {
         List<UUID> helperUuidList = this.helper.selectHelperListFromPlayer(player);
         List<String> helperNameList = new ArrayList<>();
         
-        for (UUID uuid : helperUuidList)
+        helperUuidList.stream().forEach((uuid) -> {
             helperNameList.add(Bukkit.getOfflinePlayer(uuid).getName());
+        });
         
         this.helperList.put(playerHash, helperNameList);
         

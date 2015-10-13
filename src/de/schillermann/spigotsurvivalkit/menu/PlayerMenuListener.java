@@ -1,5 +1,8 @@
 package de.schillermann.spigotsurvivalkit.menu;
 
+import de.schillermann.spigotsurvivalkit.menu.type.MainMenuHolder;
+import de.schillermann.spigotsurvivalkit.menu.type.WarpsMenuHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -10,7 +13,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -18,14 +24,25 @@ import org.bukkit.inventory.ItemStack;
  */
 final public class PlayerMenuListener implements Listener {
 
+    final private Plugin plugin;
+    
     final private Material openMenuWithItem;
     
-    final private PlayerMenu menu;
+    final private MainMenu menuMain;
     
-    public PlayerMenuListener(Material openMenuWithItem, PlayerMenu menu) {
+    final private WarpsMenu menuWarps;
+    
+    public PlayerMenuListener(
+        Plugin plugin,
+        Material openMenuWithItem,
+        MainMenu menuMain,
+        WarpsMenu menuWarps
+    ) {
         
+        this.plugin = plugin;
         this.openMenuWithItem = openMenuWithItem;
-        this.menu =  menu;
+        this.menuMain =  menuMain;
+        this.menuWarps =  menuWarps;
     }
     
     @EventHandler
@@ -44,32 +61,49 @@ final public class PlayerMenuListener implements Listener {
         Material itemType = itemInHand.getType();
         if(itemType != this.openMenuWithItem) return;
         
-        Inventory inventory =
-            this.menu.getMenu(
-                player.getLocation().getChunk(),
-                player.getUniqueId()
-            );
+        Inventory inventory = this.menuMain.getInventory(player);
         
-        player.openInventory(inventory);
+        Bukkit.getScheduler().runTask(this.plugin, () -> {
+            player.openInventory(inventory);
+        });
     }
     
     @EventHandler
     public void onSelectMenuPoint(InventoryClickEvent event) {
    
-        boolean isPlayerMenu =
-            event.getWhoClicked() instanceof Player &&
-            event.getInventory().getHolder() instanceof PlayerMenuHolder;
-    
-        if(isPlayerMenu) {
-            
-            ItemStack item = event.getCurrentItem();
-            if(item == null) return;
-            
-            Material select = item.getType();
-            Player player = (Player) event.getWhoClicked();
-            
-            this.menu.selectMenuItem(player, select);
+        if(!(event.getWhoClicked() instanceof Player)) return;
+        
+        ItemStack item = event.getCurrentItem();
+        if(item == null) return;
+        
+        ItemMeta meta = item.getItemMeta();
+        if(meta == null) return;
+        
+        InventoryHolder menuType = event.getInventory().getHolder();
+        String selectedItemTitle = meta.getDisplayName();
+        Player player = (Player) event.getWhoClicked();
+        
+        if(menuType instanceof InventoryHolder)
             event.setCancelled(true);
+        
+        if(menuType instanceof MainMenuHolder) {
+            
+            InventoryHolder subMenu =
+                this.menuMain.inventoryItemAction(player, selectedItemTitle);
+            
+            Bukkit.getScheduler().runTask(this.plugin, () -> {
+                player.closeInventory();
+            });
+            
+            if(subMenu instanceof WarpsMenuHolder) {
+                Bukkit.getScheduler().runTask(this.plugin, () -> {
+                    player.openInventory(this.menuWarps.getInventory(player));
+                });
+            }
+        }
+        else if(menuType instanceof WarpsMenuHolder) {
+            
+            this.menuWarps.inventoryItemAction(player, selectedItemTitle);
         }
     }
     
@@ -77,7 +111,7 @@ final public class PlayerMenuListener implements Listener {
     public void onGetMetadata(AsyncPlayerChatEvent event) {
 
         event.setCancelled(
-            this.menu.isMetadata(
+            this.menuMain.isMetadata(
                 event.getPlayer(),
                 event.getMessage()
             )
