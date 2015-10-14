@@ -1,6 +1,7 @@
 package de.schillermann.spigotsurvivalkit.menu;
 
 import de.schillermann.spigotsurvivalkit.menu.type.MainMenuHolder;
+import de.schillermann.spigotsurvivalkit.menu.type.MenuHolder;
 import de.schillermann.spigotsurvivalkit.menu.type.WarpsMenuHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -83,8 +84,9 @@ final public class PlayerMenuListener implements Listener {
         String selectedItemTitle = meta.getDisplayName();
         Player player = (Player) event.getWhoClicked();
         
-        if(menuType instanceof InventoryHolder)
-            event.setCancelled(true);
+        if(!(menuType instanceof MenuHolder)) return;
+        
+        event.setCancelled(true);
         
         if(menuType instanceof MainMenuHolder) {
             

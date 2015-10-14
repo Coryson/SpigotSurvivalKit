@@ -29,9 +29,9 @@ final public class WarpTable extends Table {
         String warpDescription,
         Material warpItem,
         UUID world,
-        int locationX,
-        int locationY,
-        int locationZ,
+        double locationX,
+        double locationY,
+        double locationZ,
         UUID creator
     ) {
         
@@ -49,9 +49,9 @@ final public class WarpTable extends Table {
             stmt.setString(2, warpDescription);
             stmt.setString(3, warpItem.name());
             stmt.setString(4, world.toString());
-            stmt.setInt(5, locationX);
-            stmt.setInt(6, locationY);
-            stmt.setInt(7, locationZ);
+            stmt.setDouble(5, locationX);
+            stmt.setDouble(6, locationY);
+            stmt.setDouble(7, locationZ);
             stmt.setString(8, creator.toString());
             
             stmt.executeUpdate();
@@ -108,9 +108,9 @@ final public class WarpTable extends Table {
             
             return new WarpLocation(
                 UUID.fromString(rs.getString("world")),
-                rs.getInt("location_x"),
-                rs.getInt("location_y"),
-                rs.getInt("location_z"),
+                rs.getDouble("location_x"),
+                rs.getDouble("location_y"),
+                rs.getDouble("location_z"),
                 rs.getString("warp_description")
             );
         }
@@ -170,9 +170,9 @@ final public class WarpTable extends Table {
             "warp_description TEXT," +
             "warp_item TEXT NOT NULL," +
             "world TEXT NOT NULL," +
-            "location_x INTEGER NOT NULL," +
-            "location_y INTEGER NOT NULL," +
-            "location_z INTEGER NOT NULL," +
+            "location_x REAL NOT NULL," +
+            "location_y REAL NOT NULL," +
+            "location_z REAL NOT NULL," +
             "creator_uuid TEXT NOT NULL," +
             "created INTEGER NOT NULL" +
             ");"

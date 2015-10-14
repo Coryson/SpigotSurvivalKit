@@ -10,15 +10,15 @@ final public class WarpLocation {
 
     final private UUID world;
     
-    final private int x;
+    final private double x;
     
-    final private int y;
+    final private double y;
     
-    final private int z;
+    final private double z;
     
     final private String description;
     
-    public WarpLocation(UUID world, int x, int y, int z, String description) {
+    public WarpLocation(UUID world, double x, double y, double z, String description) {
         
         this.world = world;
         this.x = x;
@@ -31,15 +31,15 @@ final public class WarpLocation {
         return this.world;
     }
     
-    public int getX() {
+    public double getX() {
         return this.x;
     }
     
-    public int getY() {
+    public double getY() {
         return this.y;
     }
 
-    public int getZ() {
+    public double getZ() {
         return this.z;
     }
     

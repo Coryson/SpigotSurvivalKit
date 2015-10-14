@@ -57,9 +57,9 @@ final public class SetWarpCommand implements CommandExecutor {
             convertWarpDescription(args),
             player.getItemInHand().getType(),
             world.getUID(),
-            player.getLocation().getBlockX(),
-            player.getLocation().getBlockY(),
-            player.getLocation().getBlockZ(),
+            player.getLocation().getX(),
+            player.getLocation().getY(),
+            player.getLocation().getZ(),
             player.getUniqueId()
         );
         
