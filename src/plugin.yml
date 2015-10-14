@@ -1,6 +1,6 @@
 name: SpigotSurvivalKit
 main: de.schillermann.spigotsurvivalkit.Main
-version: 0.8
+version: 0.9
 softdepend: [Votifier] 
 commands:
     plot:
@@ -11,11 +11,7 @@ commands:
         usage: /<command> <Spieler> [Diamanten]
         description: Displays the Player Balance or transfers money
         permission: spigotsurvivalkit.bank
-    setwarp:
-        usage: /<command> <warp name> <description>
-        description: Set a warp with name and description
-        permission: spigotsurvivalkit.setwarp
-    removewarp:
-        usage: /<command> <warp name>
-        description: Remove a warp
-        permission: spigotsurvivalkit.removewarp
+    warp:
+        usage: /<command> <set|remove> <warp name> <description>
+        description: Set or remove a warp
+        permission: spigotsurvivalkit.warp

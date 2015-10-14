@@ -68,7 +68,12 @@ final public class WarpsMenu implements PlayerMenu {
             }
             else {
                 player.teleport(player.getBedSpawnLocation());
-                player.sendMessage(ChatColor.YELLOW + warpLocation.getDescription());
+                
+                if(!warpLocation.getDescription().isEmpty())
+                    player.sendMessage(
+                        ChatColor.YELLOW +
+                        warpLocation.getDescription()
+                    );
             }
             return null;
         }
@@ -81,7 +86,12 @@ final public class WarpsMenu implements PlayerMenu {
         );
         
         player.teleport(teleportLocation);
-        player.sendMessage(ChatColor.YELLOW + warpLocation.getDescription());
+        
+        if(!warpLocation.getDescription().isEmpty())
+            player.sendMessage(
+                ChatColor.YELLOW +
+                warpLocation.getDescription()
+            );
         
         return null;
     }

@@ -9,9 +9,7 @@ import de.schillermann.spigotsurvivalkit.databases.DatabaseProvider;
 import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
 import de.schillermann.spigotsurvivalkit.utils.ChunkRegeneration;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -146,21 +144,13 @@ final public class Main extends JavaPlugin {
             new WarpsMenuMessage(config)
         );
         
-        RemoveWarpCommand removeWarpCommand = new RemoveWarpCommand(
+        WarpCommand warpCommand = new WarpCommand(
             this.database.getTableWarp(),
-            new RemoveWarpCommandMessage(config),
-            menuWarps
+            menuWarps,
+            new WarpCommandMessage(config)
         );
         
-        this.getCommand("removewarp").setExecutor(removeWarpCommand);
-        
-        SetWarpCommand setWarpCommand = new SetWarpCommand(
-            this.database.getTableWarp(),
-            new SetWarpCommandMessage(config),
-            menuWarps
-        );
-        
-        this.getCommand("setwarp").setExecutor(setWarpCommand);
+        this.getCommand("warp").setExecutor(warpCommand);
         
         PlayerMenuListener menu = new PlayerMenuListener(
             this,

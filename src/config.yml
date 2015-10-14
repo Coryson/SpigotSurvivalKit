@@ -31,12 +31,13 @@ command:
     bank:
         transfer: "\u00A72%d Goldbarren \u00A7awurden an den Spieler \u00A72%s \u00A7aüberwiesen."
         balance: "\u00A7aKontostand: \u00A72%d Goldbarren"
-    setwarp:
-        success: "\u00A7aDer Warp \u00A72%s \u00A7awurde erstellt."
-        error: "\u00A74Der Warp \u00A7c%s \u00A74kann hier nicht erstellt werden!"
-    removewarp:
-        success: "\u00A7aDer Warp \u00A72%s \u00A7awurde entfernt."
-        error: "\u00A74Der Warp \u00A7c%s \u00A74konnte nicht entfernt werden!"
+    warp:
+        set:
+            success: "\u00A7aDer Warp \u00A72%s \u00A7awurde erstellt."
+            error: "\u00A74Der Warp \u00A7c%s \u00A74kann hier nicht erstellt werden!"
+        remove:
+            success: "\u00A7aDer Warp \u00A72%s \u00A7awurde entfernt."
+            error: "\u00A74Der Warp \u00A7c%s \u00A74konnte nicht entfernt werden!"
 stats:
     number: 3
     headline: "\u00A76*** Die reichsten Spieler ***"
