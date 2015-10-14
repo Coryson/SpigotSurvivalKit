@@ -3,6 +3,7 @@ package de.schillermann.spigotsurvivalkit.listeners;
 import de.schillermann.spigotsurvivalkit.services.BankProvider;
 import de.schillermann.spigotsurvivalkit.services.Stats;
 import de.schillermann.spigotsurvivalkit.utils.InventoryUtil;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,26 +44,8 @@ final public class PlayerListener implements Listener {
         Player player = event.getPlayer();
 
         if(player.hasPlayedBefore()) {
-            int playerBalance = this.providerBank.getBalance(player.getUniqueId());
-
-            if(playerBalance > 0) {
-                
-                boolean addedItem =
-                    InventoryUtil.addItem(
-                        player,
-                        this.providerBank.GetCurrency(),
-                        playerBalance
-                    );
-                
-                if(addedItem) {
-                    
-                    this.providerBank.setBalance(player.getUniqueId(), 0);
-                    player.sendMessage(this.message.getMoney(playerBalance));
-                }
-                else {
-                    player.sendMessage(this.message.getInventoryFull());
-                }
-            }
+            
+            this.hasMoneyForPlayer(player);
         }
         else if(this.warps.getWarpFirstJoin() != null) {
             
@@ -79,9 +62,11 @@ final public class PlayerListener implements Listener {
             player.sendMessage(border);
         }
         
-        String RichestPlayers = stats.getRichestPlayers();
-        if(RichestPlayers != null)
-            player.sendMessage(RichestPlayers);
+        List<String> richestPlayers = this.stats.getRichestPlayers();
+        
+        richestPlayers.stream().forEach((richestPlayer) -> {
+            player.sendMessage(richestPlayer);
+        });
         
         event.setJoinMessage(this.message.getNormally(player.getName()));
     }
@@ -98,6 +83,29 @@ final public class PlayerListener implements Listener {
                 ChatColor.YELLOW +
                 this.warps.getWarpRespawn().getMessage()
             );
+        }
+    }
+    
+    private void hasMoneyForPlayer(Player player) {
+        
+        int playerBalance = this.providerBank.getBalance(player.getUniqueId());
+
+        if(playerBalance == 0) return;
+
+        boolean isAddedItem =
+            InventoryUtil.addItem(
+                player,
+                this.providerBank.GetCurrency(),
+                playerBalance
+            );
+
+        if(isAddedItem) {
+
+            this.providerBank.setBalance(player.getUniqueId(), 0);
+            player.sendMessage(this.message.getMoney(playerBalance));
+        }
+        else {
+            player.sendMessage(this.message.getInventoryFull());
         }
     }
 }

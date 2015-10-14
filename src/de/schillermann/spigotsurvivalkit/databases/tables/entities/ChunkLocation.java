@@ -6,10 +6,12 @@ package de.schillermann.spigotsurvivalkit.databases.tables.entities;
  */
 final public class ChunkLocation {
 
-    final int x;
-    final int z;
+    final private int x;
+    
+    final private int z;
     
     public ChunkLocation(int x, int z) {
+        
         this.x = x;
         this.z = z;
     }

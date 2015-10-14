@@ -1,8 +1,8 @@
 player_not_found: "\u00A74Spieler %s nicht gefunden!"
 chunks:
     regenerate:
-        error: "Regeneration fehlgeschlagen in Chunk X: %d Z: %d!"
-        success: "%d Chunks regeneriert."
+        error: "[%s] Regeneration fehlgeschlagen in Chunk X: %d Z: %d!"
+        success: "[%s] %d Chunks regeneriert."
 plot:
     price_default: 20
     forbidden:
@@ -40,8 +40,11 @@ command:
             error: "\u00A74Der Warp \u00A7c%s \u00A74konnte nicht entfernt werden!"
 stats:
     number: 3
-    headline: "\u00A76*** Die reichsten Spieler ***"
-    row: "\u00A7e%s %d Goldbarren"
+    headline: "\u00A76***** Die reichsten %d Spieler *****"
+    row: "\u00A76%s - \u00A7e%d Goldbarren"
+    footer: "\u00A76**********************************"
+    empty: "\u00A7eWerde der reichste Spieler, \ndurch Goldbarren und Grundstücke."
+    info: "[%s] Created player stats"
 join:
     normally: "\u00A7e %s is in the House!"
     inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Goldbarren!"

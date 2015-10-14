@@ -1,6 +1,7 @@
 package de.schillermann.spigotsurvivalkit.listeners;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.LockTable;
+import de.schillermann.spigotsurvivalkit.databases.tables.entities.BlockLocation;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,7 +45,11 @@ final public class LockListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUuid = player.getUniqueId();
         
-        UUID ownerUuid = this.lock.selectPlayerUuidFromLock(block);
+        UUID ownerUuid =
+            this.lock.selectPlayerUuidFromLock(
+                new BlockLocation(block.getLocation())
+            );
+        
         if(ownerUuid == null) return;
         
         if(playerUuid.toString().equals(ownerUuid.toString())) {
@@ -75,17 +80,26 @@ final public class LockListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         
         Block block = event.getBlockPlaced();
-        Material type = block.getType();
-        if(!canLock(type)) return;
+        Material blockType = block.getType();
+        
+        if(!canLock(blockType)) return;
+        
         Player player = event.getPlayer();
         
-        if(this.lock.insertLock(player.getUniqueId(), block)) {
-            if(type == Material.CHEST)
+        boolean isInsertLock =
+            this.lock.insertLock(
+                new BlockLocation(block.getLocation()),
+                blockType,
+                player.getUniqueId()
+            );
+        
+        if(isInsertLock) {
+            
+            if(blockType == Material.CHEST)
                 player.sendMessage(this.message.getChestLocked());
             else
                 player.sendMessage(this.message.getDoorLocked());
         }
-            
     }
     
     @EventHandler
@@ -97,7 +111,7 @@ final public class LockListener implements Listener {
         
         Player player = event.getPlayer();
         
-        if(this.lock.deleteLock(block)) {
+        if(this.lock.deleteLock(new BlockLocation(block.getLocation()))) {
             if(type != Material.CHEST)
                 player.sendMessage(this.message.getChestUnlocked());
             else

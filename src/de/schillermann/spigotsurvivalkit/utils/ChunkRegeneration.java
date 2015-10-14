@@ -13,6 +13,8 @@ final public class ChunkRegeneration implements Runnable {
     
     final private static String WORLD_NAME = "world";
     
+    final private String pluginName;
+    
     final private ChunkLogTable chunkLog;
     
     final private String msgChunksSuccess;
@@ -20,10 +22,12 @@ final public class ChunkRegeneration implements Runnable {
     final private String msgChunksError;
     
     public ChunkRegeneration(
+        String pluginName,
         ChunkLogTable chunkLog,
         String msgChunksSuccess,
         String msgChunksError
     ) {
+        this.pluginName = pluginName;
         this.chunkLog = chunkLog;
         this.msgChunksSuccess = msgChunksSuccess;
         this.msgChunksError = msgChunksError;
@@ -54,6 +58,7 @@ final public class ChunkRegeneration implements Runnable {
             Bukkit.getLogger().warning(
                 String.format(
                     this.msgChunksError,
+                    this.pluginName,
                     chunkLocation.getX(),
                     chunkLocation.getZ()
                 )
@@ -61,7 +66,11 @@ final public class ChunkRegeneration implements Runnable {
         }
         
         Bukkit.getLogger().info(
-            String.format(this.msgChunksSuccess, restoredChunks)
+            String.format(
+                this.msgChunksSuccess,
+                this.pluginName,
+                restoredChunks
+            )
         );
     }
 }

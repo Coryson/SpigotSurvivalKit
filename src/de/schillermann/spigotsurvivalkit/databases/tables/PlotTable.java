@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -40,6 +42,38 @@ final public class PlotTable extends Table {
             }
             else
                 return null;
+        }
+        catch (SQLException e) {
+            
+            Bukkit.getLogger().log(
+                Level.WARNING,
+                "{0}: {1}",
+                new Object[]{e.getClass().getName(), e.getMessage()}
+            );
+            return null;
+        }
+    }
+    
+    public HashMap<UUID, Integer> selectPlotQuantity() {
+        
+        String sql =
+            "SELECT owner_uuid, COUNT(*) as plot_quantity" +
+            " FROM " + this.table +
+            " GROUP BY owner_uuid";
+        
+        try {    
+            Statement stmt = this.database.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            HashMap<UUID, Integer> plotList = new HashMap<>();
+            
+            while(rs.next()) {
+                plotList.put(
+                    UUID.fromString(rs.getString("owner_uuid")),
+                    rs.getInt("plot_quantity")
+                );
+            }
+            
+            return plotList;
         }
         catch (SQLException e) {
             

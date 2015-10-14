@@ -1,6 +1,8 @@
 package de.schillermann.spigotsurvivalkit.services;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.StatsTable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -12,41 +14,43 @@ import org.bukkit.OfflinePlayer;
  */
 final public class Stats {
     
-    final private StatsTable table;
+    final private StatsTable tableStats;
     
     final private StatsConfig config;
     
-    public Stats(StatsTable table, StatsConfig config) {
-        this.table = table;
+    public Stats(StatsTable tableStats, StatsConfig config) {
+        this.tableStats = tableStats;
         this.config = config;
     }
     
-    public String getRichestPlayers() {
+    public List<String> getRichestPlayers() {
         
-        StringBuilder message = new StringBuilder();
+        List<String> richestPlayerList = new ArrayList<>();
+        richestPlayerList.add(this.config.getHeadline());
+        
         Map<UUID,Integer> playerStatsMap =
-            this.table.selectRichestPlayer(this.config.getNumber());
+            this.tableStats.selectRichestPlayer(this.config.getNumber());
         
-        if(playerStatsMap != null && playerStatsMap.size() > 0) {
+        if(playerStatsMap == null || playerStatsMap.isEmpty()) {
+           
+            richestPlayerList.add(this.config.getEmpty());
+        }
+        else {
             
-            message.append(this.config.getHeadline());
-            
-            for(Map.Entry playerStats : playerStatsMap.entrySet()) {
-                
+            playerStatsMap.entrySet().stream().forEach((playerStats) -> {
                 OfflinePlayer offlinePlayer =
                     Bukkit.getOfflinePlayer((UUID)playerStats.getKey());
                 
-                message.append(
+                richestPlayerList.add(
                     this.config.getRow(
                         offlinePlayer.getName(),
-                        (Integer)playerStats.getValue()
+                        playerStats.getValue()
                     )
                 );
-            }
-            return message.toString();
+            });
         }
-        else {
-            return null;
-        }
+        richestPlayerList.add(this.config.getFooter());
+        
+        return richestPlayerList;
     }
 }

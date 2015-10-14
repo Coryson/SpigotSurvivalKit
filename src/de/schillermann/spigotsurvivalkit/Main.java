@@ -8,6 +8,7 @@ import de.schillermann.spigotsurvivalkit.services.*;
 import de.schillermann.spigotsurvivalkit.databases.DatabaseProvider;
 import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
 import de.schillermann.spigotsurvivalkit.utils.ChunkRegeneration;
+import de.schillermann.spigotsurvivalkit.utils.StatsUpdate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,17 +44,22 @@ final public class Main extends JavaPlugin {
                 
         this.onCache(this.getConfig());
         
+        Material currency =
+            Material.getMaterial(this.getConfig().getString("currency"));
+        
         this.providerBank = new BankProvider(
             this.database.getTableBank(),
-            Material.getMaterial(this.getConfig().getString("currency"))
+            currency
         );
+        
+        int plotDefaultPrice = this.getConfig().getInt("plot.price_default");
         
         this.providerPlot = new PlotProvider(
             this.database.getTablePlot(),
             this.cachePlot,
             this.database.getTableChunkLog(),
             providerBank,
-            this.getConfig().getInt("plot.price_default")
+            plotDefaultPrice
         );
         
         this.onCommand(this.getConfig());
@@ -65,7 +71,19 @@ final public class Main extends JavaPlugin {
         
         Bukkit.getScheduler().runTask(
             this,
+            new StatsUpdate(
+                this.getName(),
+                this.database,
+                currency,
+                plotDefaultPrice,
+                this.getConfig().getString("stats.info")
+            )
+        );
+        
+        Bukkit.getScheduler().runTask(
+            this,
             new ChunkRegeneration(
+                this.getName(),
                 this.database.getTableChunkLog(),
                 this.getConfig().getString("chunks.regenerate.success"),
                 this.getConfig().getString("chunks.regenerate.error")
