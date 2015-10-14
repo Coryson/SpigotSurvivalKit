@@ -45,6 +45,8 @@ stats:
     footer: "\u00A76**********************************"
     empty: "\u00A7eWerde der reichste Spieler, \ndurch Goldbarren und Grundstücke."
     info: "[%s] Created player stats"
+    blacklist_uuid:
+    - e6397713-2c46-4490-b35c-f1d1450a0ddf
 join:
     normally: "\u00A7e %s is in the House!"
     inventory_full: "\u00A74In deinem Inventar ist kein Platz mehr für Goldbarren!"

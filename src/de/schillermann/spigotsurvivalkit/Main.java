@@ -76,6 +76,7 @@ final public class Main extends JavaPlugin {
                 this.database,
                 currency,
                 plotDefaultPrice,
+                this.getConfig().getStringList("stats.blacklist_uuid"),
                 this.getConfig().getString("stats.info")
             )
         );

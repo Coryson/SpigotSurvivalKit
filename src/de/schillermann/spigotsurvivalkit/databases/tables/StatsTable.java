@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -77,7 +78,8 @@ final public class StatsTable extends Table {
     public Map<UUID,Integer> selectRichestPlayer(int number) {
         
         String sql =
-            "SELECT player_uuid, money FROM " + this.table +
+            "SELECT player_uuid, money" +
+            " FROM " + this.table +
             " ORDER BY money DESC" +
             " LIMIT ?";
 
@@ -104,6 +106,24 @@ final public class StatsTable extends Table {
                 new Object[]{e.getClass().getName(), e.getMessage()}
             );
             return null;
+        }
+    }
+    
+    public void clearTable() {
+        
+        String sql = "DELETE FROM " + this.table;
+        
+        try {    
+            Statement stmt = this.database.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch (SQLException e) {
+            
+            Bukkit.getLogger().log(
+                Level.WARNING,
+                "{0}: {1}",
+                new Object[]{e.getClass().getName(), e.getMessage()}
+            );
         }
     }
     

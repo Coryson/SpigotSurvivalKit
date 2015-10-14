@@ -1,6 +1,6 @@
 name: SpigotSurvivalKit
 main: de.schillermann.spigotsurvivalkit.Main
-version: 0.10
+version: 0.11
 softdepend: [Votifier] 
 commands:
     plot:

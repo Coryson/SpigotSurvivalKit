@@ -2,6 +2,7 @@ package de.schillermann.spigotsurvivalkit.utils;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -41,5 +42,17 @@ final public class InventoryUtil {
         
         player.getInventory().setItem(emptySlot, new ItemStack(type, amount));
         return true;
+    }
+    
+    public static int getAmountsOfItem(Inventory inventory, Material type) {
+        
+        int amount = 0;
+        ItemStack[] inventoryÍtems = inventory.getContents();
+        
+        for(ItemStack item : inventoryÍtems)
+            if(item != null && item.getType() == type)
+                amount += item.getAmount();
+  
+        return amount;
     }
 }

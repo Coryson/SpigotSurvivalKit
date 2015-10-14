@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -26,6 +25,8 @@ final public class StatsUpdate implements Runnable {
     
     final private int plotDefaultPrice;
     
+    final private List<String> blacklist;
+    
     final private String message;
     
     public StatsUpdate(
@@ -33,6 +34,7 @@ final public class StatsUpdate implements Runnable {
         DatabaseProvider database,
         Material currency,
         int plotDefaultPrice,
+        List<String> blacklist,
         String message
     ) {
         
@@ -40,6 +42,7 @@ final public class StatsUpdate implements Runnable {
         this.database = database;
         this.currency = currency;
         this.plotDefaultPrice = plotDefaultPrice;
+        this.blacklist = blacklist;
         this.message = message;
     }
     
@@ -48,59 +51,57 @@ final public class StatsUpdate implements Runnable {
         
         Material materialChest = Material.CHEST;
         
+        this.database.getTableStats().clearTable();
+        
         HashMap<UUID, Integer> rangList =
             this.database.getTablePlot().selectPlotQuantity();
  
         rangList.entrySet().stream().forEach((playerRang) -> {
             
-            Integer balance = playerRang.getValue() * plotDefaultPrice;
             UUID playerUuid = playerRang.getKey();
             
-            List<BlockLocation> blockLocationList =
-                this.database.getTableLock().selectLockLocationFromPlayer(
-                    playerUuid,
-                    materialChest
-                );
+            if(!this.blacklist.contains(playerUuid.toString())) {
             
-            for(BlockLocation blockLocation : blockLocationList) {
-                
-                Location chestLocation = new Location(
-                    Bukkit.getWorld(blockLocation.getWorld()),
-                    blockLocation.getX(),
-                    blockLocation.getY(),
-                    blockLocation.getZ()
-                );
-                
-                Block block = chestLocation.getBlock();
-                
-                if(block == null || block.getType() != materialChest) {
-                    
-                    this.database.getTableLock().deleteLock(
-                        new BlockLocation(chestLocation)
+                Integer balance = playerRang.getValue() * plotDefaultPrice;
+
+                List<BlockLocation> blockLocationList =
+                    this.database.getTableLock().selectLockLocationFromPlayer(
+                        playerUuid,
+                        materialChest
                     );
-                    continue;
+
+                for(BlockLocation blockLocation : blockLocationList) {
+
+                    Location chestLocation = new Location(
+                        Bukkit.getWorld(blockLocation.getWorld()),
+                        blockLocation.getX(),
+                        blockLocation.getY(),
+                        blockLocation.getZ()
+                    );
+
+                    Block block = chestLocation.getBlock();
+
+                    if(block == null || block.getType() != materialChest) {
+
+                        this.database.getTableLock().deleteLock(
+                            new BlockLocation(chestLocation)
+                        );
+                        continue;
+                    }
+
+                    Chest chest = (Chest)block.getState();
+                    balance +=
+                        InventoryUtil.getAmountsOfItem(
+                            chest.getBlockInventory(),
+                            currency
+                        );
                 }
-                
-                Chest chest = (Chest)block.getState();
-                balance += getAmountsOfMoney(chest, currency);
+
+                if(!this.database.getTableStats().updateStats(playerUuid, balance))
+                    this.database.getTableStats().insertStats(playerUuid, balance);
             }
-            
-            if(!this.database.getTableStats().updateStats(playerUuid, balance))
-                this.database.getTableStats().insertStats(playerUuid, balance);
         });
         
         Bukkit.getLogger().info(String.format(this.message, this.pluginName));
-    }
-    
-    public static int getAmountsOfMoney(Chest chest, Material currency) {
-        
-        int amount = 0;
-        ItemStack[] chestÍtems = chest.getBlockInventory().getContents();
-        
-        for(ItemStack item : chestÍtems)
-            if(item != null && item.getType() == currency)
-                amount += item.getAmount();
-  
-        return amount;
     }
 }
