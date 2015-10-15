@@ -1,10 +1,11 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.menu.main;
 
 import de.schillermann.spigotsurvivalkit.services.PlotProvider;
 import de.schillermann.spigotsurvivalkit.cache.HelperCache;
 import de.schillermann.spigotsurvivalkit.cache.HelperCache.HelperAction;
-import de.schillermann.spigotsurvivalkit.menu.type.MainMenuHolder;
-import de.schillermann.spigotsurvivalkit.menu.type.WarpsMenuHolder;
+import de.schillermann.spigotsurvivalkit.menu.PlayerMenu;
+import de.schillermann.spigotsurvivalkit.entities.PlotMetadata;
+import de.schillermann.spigotsurvivalkit.menu.warps.WarpsMenuHolder;
 import java.util.HashMap;
 import java.util.UUID;
 import org.bukkit.Bukkit;

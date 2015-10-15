@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.databases.tables;
 
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpItem;
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
+import de.schillermann.spigotsurvivalkit.entities.WarpItem;
+import de.schillermann.spigotsurvivalkit.entities.WarpLocation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

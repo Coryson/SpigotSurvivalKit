@@ -1,10 +1,12 @@
 package de.schillermann.spigotsurvivalkit.menu;
 
-import de.schillermann.spigotsurvivalkit.menu.type.MainMenuHolder;
-import de.schillermann.spigotsurvivalkit.menu.type.MenuHolder;
-import de.schillermann.spigotsurvivalkit.menu.type.WarpsMenuHolder;
+import de.schillermann.spigotsurvivalkit.menu.warps.WarpsMenu;
+import de.schillermann.spigotsurvivalkit.menu.main.MainMenu;
+import de.schillermann.spigotsurvivalkit.menu.main.MainMenuHolder;
+import de.schillermann.spigotsurvivalkit.menu.warps.WarpsMenuHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -62,6 +64,16 @@ final public class PlayerMenuListener implements Listener {
         Material itemType = itemInHand.getType();
         if(itemType != this.openMenuWithItem) return;
         
+        int volume = 10;
+        int pitch = 1;
+
+        player.playSound(
+            player.getLocation(),
+            Sound.CHICKEN_EGG_POP,
+            volume,
+            pitch
+        );
+        
         Inventory inventory = this.menuMain.getInventory(player);
         
         Bukkit.getScheduler().runTask(this.plugin, () -> {
@@ -84,7 +96,7 @@ final public class PlayerMenuListener implements Listener {
         String selectedItemTitle = meta.getDisplayName();
         Player player = (Player) event.getWhoClicked();
         
-        if(!(menuType instanceof MenuHolder)) return;
+        if(!(menuType instanceof CustomInventory)) return;
         
         event.setCancelled(true);
         

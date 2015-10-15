@@ -3,7 +3,7 @@ package de.schillermann.spigotsurvivalkit.services;
 import de.schillermann.spigotsurvivalkit.cache.PlotCache;
 import de.schillermann.spigotsurvivalkit.databases.tables.ChunkLogTable;
 import de.schillermann.spigotsurvivalkit.databases.tables.PlotTable;
-import de.schillermann.spigotsurvivalkit.menu.PlotMetadata;
+import de.schillermann.spigotsurvivalkit.entities.PlotMetadata;
 import de.schillermann.spigotsurvivalkit.utils.InventoryUtil;
 import java.util.UUID;
 import org.bukkit.Bukkit;

@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.listeners;
 
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
+import de.schillermann.spigotsurvivalkit.entities.WarpLocation;
 
 /**
  *

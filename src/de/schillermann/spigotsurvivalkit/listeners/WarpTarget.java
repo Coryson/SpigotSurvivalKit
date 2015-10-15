@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.listeners;
 
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpLocation;
+import de.schillermann.spigotsurvivalkit.entities.WarpLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -14,16 +14,10 @@ final public class WarpTarget {
     
     final private String message;
     
-    public WarpTarget(WarpLocation location) {
-        
-        this.location = new Location(
-            Bukkit.getWorld(location.getWorld()),
-            location.getX(),
-            location.getY(),
-            location.getZ()
-        );
-        
-        this.message = location.getDescription();
+    public WarpTarget(WarpLocation warp) {
+
+        this.location = warp.toLocation();
+        this.message = warp.getDescription();
     }
     
     public Location getLocation() {

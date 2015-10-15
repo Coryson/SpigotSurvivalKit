@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.databases.tables;
 
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.ChunkLocation;
+import de.schillermann.spigotsurvivalkit.entities.ChunkLocation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

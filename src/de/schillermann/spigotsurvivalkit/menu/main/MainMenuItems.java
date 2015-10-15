@@ -1,4 +1,4 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.menu.main;
 
 import de.schillermann.spigotsurvivalkit.menu.item.HelpersMenuItem;
 import de.schillermann.spigotsurvivalkit.menu.item.MenuItem;

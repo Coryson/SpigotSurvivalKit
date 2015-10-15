@@ -1,4 +1,4 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.menu.main;
 
 import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;

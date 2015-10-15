@@ -24,9 +24,9 @@ final public class StatsTable extends Table {
     public boolean insertStats(UUID player, int money) {
         
         String sql =
-            "INSERT OR IGNORE INTO " + this.table +
-            " (player_uuid, money, updated)" +
-            " VALUES (?, ?, strftime('%s','now'))";
+            "INSERT INTO " + this.table +
+            " (player_uuid, money)" +
+            " VALUES (?, ?)";
  
         try
         {    
@@ -37,32 +37,6 @@ final public class StatsTable extends Table {
             stmt.executeUpdate();
     
             return true;
-        }
-        catch (SQLException e)
-        {
-            Bukkit.getLogger().log(
-                Level.WARNING,
-                "{0}: {1}",
-                new Object[]{e.getClass().getName(), e.getMessage()}
-            );
-            return false;
-        }
-    }
-    
-    public boolean updateStats(UUID player, int money) {
-        
-        String sql =
-            "UPDATE " + this.table +
-            " SET money = ?, updated = strftime('%s','now') " +
-            " WHERE player_uuid = ?";
-  
-        try
-        {    
-            PreparedStatement stmt = this.database.prepareStatement(sql);
-            
-            stmt.setInt(1, money);
-            stmt.setString(2, player.toString());
-            return stmt.executeUpdate() == 1;
         }
         catch (SQLException e)
         {
@@ -133,8 +107,7 @@ final public class StatsTable extends Table {
             "CREATE TABLE IF NOT EXISTS " + this.table +
             "(" +
             "player_uuid TEXT NOT NULL PRIMARY KEY," +
-            "money INTEGER NOT NULL," +
-            "updated INTEGER NOT NULL" +
+            "money INTEGER NOT NULL" +
             ");"
         );
     }

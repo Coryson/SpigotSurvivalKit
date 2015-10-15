@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.utils;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.ChunkLogTable;
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.ChunkLocation;
+import de.schillermann.spigotsurvivalkit.entities.ChunkLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 

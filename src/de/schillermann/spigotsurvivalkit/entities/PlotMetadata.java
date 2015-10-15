@@ -1,4 +1,4 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.entities;
 
 import java.util.UUID;
 

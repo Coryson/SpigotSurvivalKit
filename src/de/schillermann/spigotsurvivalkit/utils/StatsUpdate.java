@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.utils;
 
 import de.schillermann.spigotsurvivalkit.databases.DatabaseProvider;
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.BlockLocation;
+import de.schillermann.spigotsurvivalkit.entities.BlockLocation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -97,8 +97,7 @@ final public class StatsUpdate implements Runnable {
                         );
                 }
 
-                if(!this.database.getTableStats().updateStats(playerUuid, balance))
-                    this.database.getTableStats().insertStats(playerUuid, balance);
+                this.database.getTableStats().insertStats(playerUuid, balance);
             }
         });
         

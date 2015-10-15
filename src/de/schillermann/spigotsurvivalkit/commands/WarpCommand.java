@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.commands;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.WarpTable;
-import de.schillermann.spigotsurvivalkit.menu.WarpsMenu;
+import de.schillermann.spigotsurvivalkit.menu.warps.WarpsMenu;
 import java.util.Arrays;
 import org.bukkit.World;
 import org.bukkit.command.Command;

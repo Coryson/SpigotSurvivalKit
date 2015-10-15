@@ -1,4 +1,4 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.menu.warps;
 
 import org.bukkit.configuration.file.FileConfiguration;
 

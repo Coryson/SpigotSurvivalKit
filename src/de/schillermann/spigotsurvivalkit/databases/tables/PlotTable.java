@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.databases.tables;
 
-import de.schillermann.spigotsurvivalkit.menu.PlotMetadata;
+import de.schillermann.spigotsurvivalkit.entities.PlotMetadata;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

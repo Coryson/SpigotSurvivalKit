@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.listeners;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.LockTable;
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.BlockLocation;
+import de.schillermann.spigotsurvivalkit.entities.BlockLocation;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

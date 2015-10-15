@@ -1,7 +1,7 @@
 package de.schillermann.spigotsurvivalkit.cache;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.PlotTable;
-import de.schillermann.spigotsurvivalkit.menu.PlotMetadata;
+import de.schillermann.spigotsurvivalkit.entities.PlotMetadata;
 import java.util.Arrays;
 import java.util.UUID;
 import org.bukkit.Chunk;

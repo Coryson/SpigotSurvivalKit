@@ -1,7 +1,7 @@
-package de.schillermann.spigotsurvivalkit.menu;
+package de.schillermann.spigotsurvivalkit.menu.warps;
 
 import de.schillermann.spigotsurvivalkit.databases.tables.WarpTable;
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.WarpItem;
+import de.schillermann.spigotsurvivalkit.entities.WarpItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;

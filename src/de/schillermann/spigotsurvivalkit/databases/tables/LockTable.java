@@ -1,6 +1,6 @@
 package de.schillermann.spigotsurvivalkit.databases.tables;
 
-import de.schillermann.spigotsurvivalkit.databases.tables.entities.BlockLocation;
+import de.schillermann.spigotsurvivalkit.entities.BlockLocation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

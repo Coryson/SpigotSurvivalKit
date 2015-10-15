@@ -1,6 +1,8 @@
-package de.schillermann.spigotsurvivalkit.databases.tables.entities;
+package de.schillermann.spigotsurvivalkit.entities;
 
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /**
  *
@@ -45,5 +47,15 @@ final public class WarpLocation {
     
     public String getDescription() {
         return this.description;
+    }
+    
+    public Location toLocation() {
+        
+        return new Location(
+            Bukkit.getWorld(this.world),
+            this.x,
+            this.y,
+            this.z
+        );
     }
 }

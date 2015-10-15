@@ -1,4 +1,4 @@
-package de.schillermann.spigotsurvivalkit.databases.tables.entities;
+package de.schillermann.spigotsurvivalkit.entities;
 
 /**
  *
